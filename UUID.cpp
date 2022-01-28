@@ -4,11 +4,11 @@
  * Constructors
  */
 UUID::UUID()
-    : m_version{Version::Nil} {
+        : m_version{Version::Nil} {
 }
 
 UUID::UUID(Version ver)
-    : m_version{ver} {
+        : m_version{ver} {
     switch(ver) {
         case Version::Nil:
             break;
@@ -26,28 +26,28 @@ UUID::UUID(Version ver)
 }
 
 UUID::UUID(const UUID &uuid)
-    : m_version{uuid.m_version},
-      m_time_low{uuid.m_time_low}, m_time_mid{uuid.m_time_mid},
-      m_time_hi_and_version{uuid.m_time_hi_and_version},
-      m_clock_seq_hi_and_reserved{uuid.m_clock_seq_hi_and_reserved},
-      m_clock_seq_low{uuid.m_clock_seq_low},
-      m_node{uuid.m_node} {
+        : m_version{uuid.m_version},
+          m_time_low{uuid.m_time_low}, m_time_mid{uuid.m_time_mid},
+          m_time_hi_and_version{uuid.m_time_hi_and_version},
+          m_clock_seq_hi_and_reserved{uuid.m_clock_seq_hi_and_reserved},
+          m_clock_seq_low{uuid.m_clock_seq_low},
+          m_node{uuid.m_node} {
 }
 
 UUID::UUID(const unsigned long &time_low, const unsigned long &time_mid, const unsigned long &time_hi_and_version,
            const unsigned long &clock_seq_hi_and_reserved, const unsigned long &clock_seq_low,
            const unsigned long long &node)
-    : m_time_low{time_low}, m_time_mid{time_mid}, m_time_hi_and_version{time_hi_and_version},
-      m_clock_seq_hi_and_reserved{clock_seq_hi_and_reserved}, m_clock_seq_low{clock_seq_low},
-      m_node{node} {
+        : m_time_low{time_low}, m_time_mid{time_mid}, m_time_hi_and_version{time_hi_and_version},
+          m_clock_seq_hi_and_reserved{clock_seq_hi_and_reserved}, m_clock_seq_low{clock_seq_low},
+          m_node{node} {
     m_version = Version::Nil;
 }
 
 UUID::UUID(const std::string &time_low, const std::string &time_mid, const std::string &time_hi_and_version,
            const std::string &clock_seq_hi_and_reserved, const std::string &clock_seq_low, const std::string &node)
-   : m_time_low{time_low}, m_time_mid{time_mid}, m_time_hi_and_version{time_hi_and_version},
-     m_clock_seq_hi_and_reserved{clock_seq_hi_and_reserved}, m_clock_seq_low{clock_seq_low},
-     m_node{node} {
+        : m_time_low{time_low}, m_time_mid{time_mid}, m_time_hi_and_version{time_hi_and_version},
+          m_clock_seq_hi_and_reserved{clock_seq_hi_and_reserved}, m_clock_seq_low{clock_seq_low},
+          m_node{node} {
     m_version = Version::Nil;
 }
 
@@ -78,7 +78,7 @@ std::string UUID::str() {
        << std::setw(2 ) << m_clock_seq_low.to_ulong()       << '-'  // clock-seq-low
        << std::setw(12) << m_node.to_ullong();                      // node
 
-   return ss.str();
+    return ss.str();
 }
 
 std::string UUID::urn_str() {
