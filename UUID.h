@@ -4,14 +4,15 @@
 #include <bitset>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 
-#include "VersionBitsets.h"
 
-class UUID {
+class UUID
+{
 public:
     enum Version {
-        Nil,
+        Unresolved,
         Version1,
         Version2,
         Version3,
@@ -32,35 +33,43 @@ private:
     void parse_version();
 
 public:
-    // No-args constructor creates a nil UUID
+    /*
+     * Constructors
+     */
+    // No-args constructor creates a nil UUID of the form:
+    // Ex: 00000000-0000-0000-0000-000000000000
+    // std::bitset defaults to all 0's, so nothing special here
     UUID();
     // Version constructor
-    UUID(Version ver);
+    UUID(const Version& ver);
     // Copy constructor
     UUID(const UUID &uuid);
-    // Integer constructor
+    // Integer piece constructor
     UUID(const unsigned long& time_low,
          const unsigned long& time_mid,
          const unsigned long& time_hi_and_version,
          const unsigned long& clock_seq_hi_and_reserved,
          const unsigned long& clock_seq_low,
          const unsigned long long& node);
-    // String constructor
-    UUID(const std::string& time_low,
-         const std::string& time_mid,
-         const std::string& time_hi_and_version,
-         const std::string& clock_seq_hi_and_reserved,
-         const std::string& clock_seq_low,
-         const std::string& node);
+    // FIXME: String constructor
 
-    // Getters
+    /*
+     * Functions
+     */
     unsigned int get_version() const;
-
     // Get a string representation of the UUID
-    std::string str();
+    std::string str() const;
     // Get a string representation of the UUID as a URN
-    // Looks like urn:uuid:{uuid}
-    std::string urn_str();
+    // Ex: urn:uuid:{uuid}
+    std::string urn_str() const;
+
+    /*
+     * Operator Overloading
+     */
+    friend std::ostream& operator<<(std::ostream& os, const UUID& u) {
+        os << u.str();
+        return os;
+    }
 };
 
 
