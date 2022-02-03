@@ -16,19 +16,20 @@ UUID::UUID(const Version& ver)
         case Version::Unresolved:
             break;
         case Version::v1:
-            // FIXME: implement UUID version 1
+            // TODO: implement UUID version 1
+            v1_uuid();
             break;
         case Version::v2:
-            // FIXME: implement UUID version 2
+            // TODO: implement UUID version 2
             break;
         case Version::v3:
-            // FIXME: implement UUID version 3
+            // TODO: implement UUID version 3
             break;
         case Version::v4:
-            // FIXME: implement UUID version 4
+            // TODO: implement UUID version 4
             break;
         case Version::v5:
-            // FIXME: implement UUID version 5
+            // TODO: implement UUID version 5
             break;
 
         default: ;  // Do something more here
@@ -45,23 +46,13 @@ UUID::UUID(const UUID &u)
 {
 }
 
-UUID::UUID(const unsigned long &time_low, const unsigned long &time_mid, const unsigned long &time_hi_and_version,
-           const unsigned long &clock_seq_hi_and_reserved, const unsigned long &clock_seq_low,
-           const unsigned long long &node)
-    : m_time_low{time_low}, m_time_mid{time_mid}, m_time_hi_and_version{time_hi_and_version},
-      m_clock_seq_hi_and_reserved{clock_seq_hi_and_reserved}, m_clock_seq_low{clock_seq_low},
-      m_node{node}
-{
-    parse_version();
-}
-
 UUID::UUID(const std::string& uuid_str)
-    : m_time_low{get_binary_str_from_hex_str(uuid_str.substr(0,8))},
-      m_time_mid{get_binary_str_from_hex_str(uuid_str.substr(9,4))},
-      m_time_hi_and_version{get_binary_str_from_hex_str(uuid_str.substr(14,4))},
-      m_clock_seq_hi_and_reserved{get_binary_str_from_hex_str(uuid_str.substr(19,2))},
-      m_clock_seq_low{get_binary_str_from_hex_str(uuid_str.substr(21,2))},
-      m_node{get_binary_str_from_hex_str(uuid_str.substr(24,12))}
+    : m_time_low{get_bin_str_from_hex_str(uuid_str.substr(0,8))},
+      m_time_mid{get_bin_str_from_hex_str(uuid_str.substr(9, 4))},
+      m_time_hi_and_version{get_bin_str_from_hex_str(uuid_str.substr(14, 4))},
+      m_clock_seq_hi_and_reserved{get_bin_str_from_hex_str(uuid_str.substr(19, 2))},
+      m_clock_seq_low{get_bin_str_from_hex_str(uuid_str.substr(21, 2))},
+      m_node{get_bin_str_from_hex_str(uuid_str.substr(24, 12))}
 {
     parse_version();
 }
@@ -89,6 +80,31 @@ void UUID::parse_version() {
 
         default: m_version = Version::Unresolved;
     }
+}
+
+void UUID::v1_uuid() {
+    uint64_t uuid_time {get_uuid_utc_base_time_ticks()};
+
+    // Low 4 bytes of the time
+    m_time_low = std::bitset<32>{uuid_time & 0xFFFFFFFF};
+    uuid_time >>= 32;  // shift 32 bits
+    // Mid 2 bytes of the time
+    m_time_mid = std::bitset<16>{uuid_time & 0xFFFF};
+    uuid_time >>= 16;  // shift 16 bits
+    // Add 4 bit version and high 12 bits of the time
+    m_time_hi_and_version = std::bitset<16>{0x1000 | (uuid_time & 0xFFF)};
+
+    // TODO: clock-seq-and-reserved
+    // TODO: clock-seq-low
+    // TODO: node
+}
+void UUID::v2_uuid() {
+}
+void UUID::v3_uuid() {
+}
+void UUID::v4_uuid() {
+}
+void UUID::v5_uuid() {
 }
 
 std::string UUID::str() const {

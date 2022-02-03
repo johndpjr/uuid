@@ -25,14 +25,20 @@ public:
 private:
     Version               m_version;
 
-    const std::bitset<32> m_time_low;
-    const std::bitset<16> m_time_mid;
-    const std::bitset<16> m_time_hi_and_version;
-    const std::bitset<8>  m_clock_seq_hi_and_reserved;
-    const std::bitset<8>  m_clock_seq_low;
-    const std::bitset<48> m_node;
+    // FIXME: consider making const
+    std::bitset<32> m_time_low;
+    std::bitset<16> m_time_mid;
+    std::bitset<16> m_time_hi_and_version;
+    std::bitset<8>  m_clock_seq_hi_and_reserved;
+    std::bitset<8>  m_clock_seq_low;
+    std::bitset<48> m_node;
 
     void parse_version();
+    void v1_uuid();
+    void v2_uuid();
+    void v3_uuid();
+    void v4_uuid();
+    void v5_uuid();
 
 public:
     /*
@@ -45,13 +51,7 @@ public:
     UUID(const Version& ver);
     // Copy constructor
     UUID(const UUID &uuid);
-    // Integer piece constructor
-    UUID(const unsigned long& time_low,
-         const unsigned long& time_mid,
-         const unsigned long& time_hi_and_version,
-         const unsigned long& clock_seq_hi_and_reserved,
-         const unsigned long& clock_seq_low,
-         const unsigned long long& node);
+    // String constructor
     UUID(const std::string& uuid_str);
 
     /*
@@ -68,7 +68,8 @@ public:
      * Operator Overloading
      */
     friend std::ostream& operator<<(std::ostream& os, const UUID& u);
-    // FIXME: implement >> operator (and have it be case insensitive on input)
+    // TODO: implement >> operator (and have it be case insensitive on input)
+    // TODO:
 };
 
 
