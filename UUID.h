@@ -52,7 +52,6 @@ public:
          const unsigned long& clock_seq_hi_and_reserved,
          const unsigned long& clock_seq_low,
          const unsigned long long& node);
-    // FIXME: String constructor
     UUID(const std::string& uuid_str);
 
     /*
