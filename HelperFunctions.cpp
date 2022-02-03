@@ -1,6 +1,6 @@
 #include "HelperFunctions.h"
 
-std::string get_binary_str_from_hex_str(const std::string& hex_str) {
+std::string get_bin_str_from_hex_str(const std::string& hex_str) {
     std::string bin_str;
     for (size_t i{0}; i<hex_str.length(); ++i) {
         switch (hex_str.at(i)) {
@@ -30,4 +30,14 @@ std::string get_binary_str_from_hex_str(const std::string& hex_str) {
     }
 
     return bin_str;
+}
+
+uint64_t get_uuid_utc_base_time_ticks() {
+    time_t timer;
+    time(&timer);
+    // FIXME: add constants
+    // Ticks between October 15, 1582 and January 1, 1970
+    uint64_t ticks {0x1B21DD213814000};
+    ticks += timer * 0x989680;  // multiply timer by 1e+7 to get intervals
+    return ticks;
 }
