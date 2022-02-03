@@ -7,17 +7,19 @@
 #include <iostream>
 #include <iomanip>
 
+#include "HelperFunctions.h"
+
 
 class UUID
 {
 public:
     enum Version {
         Unresolved,
-        Version1,
-        Version2,
-        Version3,
-        Version4,
-        Version5
+        v1,
+        v2,
+        v3,
+        v4,
+        v5
     };
 
 private:
@@ -36,8 +38,7 @@ public:
     /*
      * Constructors
      */
-    // No-args constructor creates a nil UUID of the form:
-    // Ex: 00000000-0000-0000-0000-000000000000
+    // No-args constructor creates a nil UUID: 00000000-0000-0000-0000-000000000000
     // std::bitset defaults to all 0's, so nothing special here
     UUID();
     // Version constructor
@@ -52,6 +53,7 @@ public:
          const unsigned long& clock_seq_low,
          const unsigned long long& node);
     // FIXME: String constructor
+    UUID(const std::string& uuid_str);
 
     /*
      * Functions
@@ -66,10 +68,8 @@ public:
     /*
      * Operator Overloading
      */
-    friend std::ostream& operator<<(std::ostream& os, const UUID& u) {
-        os << u.str();
-        return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, const UUID& u);
+    // FIXME: implement >> operator (and have it be case insensitive on input)
 };
 
 
