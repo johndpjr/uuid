@@ -145,3 +145,19 @@ bool operator==(const UUID& lhs, const UUID& rhs) {
 bool operator!=(const UUID& lhs, const UUID& rhs) {
     return !(lhs == rhs);
 }
+
+bool operator>(const UUID& lhs, const UUID& rhs) {
+    return (lhs.str() > rhs.str());
+}
+
+bool operator<(const UUID& lhs, const UUID& rhs) {
+    return (lhs.str() < rhs.str());
+}
+
+bool operator>=(const UUID& lhs, const UUID& rhs) {
+    return (lhs.str() >= rhs.str());
+}
+
+bool operator<=(const UUID& lhs, const UUID& rhs) {
+    return (lhs.str() <= rhs.str());
+}

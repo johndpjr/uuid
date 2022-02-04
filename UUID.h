@@ -71,6 +71,10 @@ public:
     // TODO: implement >> operator (and have it be case insensitive on input)
     friend bool operator==(const UUID& lhs, const UUID& rhs);
     friend bool operator!=(const UUID& lhs, const UUID& rhs);
+    friend bool operator>(const UUID& lhs, const UUID& rhs);
+    friend bool operator<(const UUID& lhs, const UUID& rhs);
+    friend bool operator>=(const UUID& lhs, const UUID& rhs);
+    friend bool operator<=(const UUID& lhs, const UUID& rhs);
 };
 
 
