@@ -33,11 +33,11 @@ std::string get_bin_str_from_hex_str(const std::string& hex_str) {
 }
 
 uint64_t get_uuid_utc_base_time_ticks() {
-    time_t timer;
-    time(&timer);
+    auto now = std::chrono::system_clock::now();
     // FIXME: add constants
     // Ticks between October 15, 1582 and January 1, 1970
     uint64_t ticks {0x1B21DD213814000};
-    ticks += timer * 0x989680;  // multiply timer by 1e+7 to get intervals
+    // Multiply timestamp (in microseconds) by 10 to get ticks sinch epoch
+    ticks += std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() * 10;
     return ticks;
 }
