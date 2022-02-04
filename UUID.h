@@ -69,7 +69,8 @@ public:
      */
     friend std::ostream& operator<<(std::ostream& os, const UUID& u);
     // TODO: implement >> operator (and have it be case insensitive on input)
-    // TODO:
+    friend bool operator==(const UUID& lhs, const UUID& rhs);
+    friend bool operator!=(const UUID& lhs, const UUID& rhs);
 };
 
 

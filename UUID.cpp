@@ -132,3 +132,16 @@ std::ostream& operator<<(std::ostream& os, const UUID& u) {
     os << u.str();
     return os;
 }
+
+bool operator==(const UUID& lhs, const UUID& rhs) {
+    return (lhs.m_time_low == rhs.m_time_low &&
+            lhs.m_time_mid == rhs.m_time_mid &&
+            lhs.m_time_hi_and_version == rhs.m_time_hi_and_version &&
+            lhs.m_clock_seq_hi_and_reserved == rhs.m_clock_seq_hi_and_reserved &&
+            lhs.m_clock_seq_low == rhs.m_clock_seq_low &&
+            lhs.m_node == rhs.m_node);
+}
+
+bool operator!=(const UUID& lhs, const UUID& rhs) {
+    return !(lhs == rhs);
+}
