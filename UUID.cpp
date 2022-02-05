@@ -133,6 +133,14 @@ std::ostream& operator<<(std::ostream& os, const UUID& u) {
     return os;
 }
 
+std::istream& operator>>(std::istream& is, UUID& u) {
+    std::string u_str;
+    is >> u_str;
+    UUID new_u {u_str};
+    u = new_u;
+    return is;
+}
+
 bool operator==(const UUID& lhs, const UUID& rhs) {
     return (lhs.m_time_low == rhs.m_time_low &&
             lhs.m_time_mid == rhs.m_time_mid &&

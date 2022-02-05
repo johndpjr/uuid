@@ -25,7 +25,6 @@ public:
 private:
     Version               m_version;
 
-    // FIXME: consider making const
     std::bitset<32> m_time_low;
     std::bitset<16> m_time_mid;
     std::bitset<16> m_time_hi_and_version;
@@ -68,7 +67,7 @@ public:
      * Operator Overloading
      */
     friend std::ostream& operator<<(std::ostream& os, const UUID& u);
-    // TODO: implement >> operator (and have it be case insensitive on input)
+    friend std::istream& operator>>(std::istream& is, UUID& u);
     friend bool operator==(const UUID& lhs, const UUID& rhs);
     friend bool operator!=(const UUID& lhs, const UUID& rhs);
     friend bool operator>(const UUID& lhs, const UUID& rhs);
