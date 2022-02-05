@@ -5,6 +5,8 @@
 #include <string>
 #include <chrono>
 
+#include "constants.h"
+
 
 // Returns a binary string from a hexadecimal string
 std::string get_bin_str_from_hex_str(const std::string& hex_str);

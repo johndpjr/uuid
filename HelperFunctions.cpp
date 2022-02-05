@@ -34,10 +34,9 @@ std::string get_bin_str_from_hex_str(const std::string& hex_str) {
 
 uint64_t get_uuid_utc_base_time_ticks() {
     auto now = std::chrono::system_clock::now();
-    // FIXME: add constants
-    // Ticks between October 15, 1582 and January 1, 1970
-    uint64_t ticks {0x1B21DD213814000};
+    uint64_t ticks {constants::DELTA_100ns_TICKS_GREG_AND_UNIX_EPOCH};
     // Multiply timestamp (in microseconds) by 10 to get ticks sinch epoch
+    // FIXME: make sure there are no duplicate uuids in generation
     ticks += std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() * 10;
     return ticks;
 }
