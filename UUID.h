@@ -56,12 +56,12 @@ public:
     /*
      * Functions
      */
-    unsigned int get_version() const;
+    [[nodiscard]] unsigned int get_version() const;
     // Get a string representation of the UUID
-    std::string str() const;
+    [[nodiscard]] std::string str() const;
     // Get a string representation of the UUID as a URN
     // Ex: urn:uuid:{uuid}
-    std::string urn_str() const;
+    [[nodiscard]] std::string urn_str() const;
 
     /*
      * Operator Overloading
