@@ -12,15 +12,12 @@ UUID::UUID(const Version& ver)
     : m_version{ver}
 {
     switch(ver) {
-        // No need to implement Unresolved version - it defaults to nil UUID
+        // No action needed for an Unresolved version - it defaults to a Nil UUID
         case Version::Unresolved:
             break;
         case Version::v1:
             // TODO: implement UUID version 1
             v1_uuid();
-            break;
-        case Version::v2:
-            // TODO: implement UUID version 2
             break;
         case Version::v3:
             // TODO: implement UUID version 3
@@ -31,8 +28,6 @@ UUID::UUID(const Version& ver)
         case Version::v5:
             // TODO: implement UUID version 5
             break;
-
-        default: ;  // Do something more here
     }
 }
 
@@ -73,7 +68,6 @@ void UUID::parse_version() {
     unsigned long ver {ver_set.to_ulong()};
     switch (ver) {
         case 1: m_version = Version::v1; break;
-        case 2: m_version = Version::v2; break;
         case 3: m_version = Version::v3; break;
         case 4: m_version = Version::v4; break;
         case 5: m_version = Version::v5; break;
@@ -98,12 +92,13 @@ void UUID::v1_uuid() {
     // TODO: clock-seq-low
     // TODO: node
 }
-void UUID::v2_uuid() {
-}
+
 void UUID::v3_uuid() {
 }
+
 void UUID::v4_uuid() {
 }
+
 void UUID::v5_uuid() {
 }
 

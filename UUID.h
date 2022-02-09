@@ -14,16 +14,15 @@ class UUID
 {
 public:
     enum Version {
-        Unresolved,
-        v1,
-        v2,
-        v3,
-        v4,
-        v5
+        Unresolved = 0,
+        v1         = 1,
+        v3         = 3,
+        v4         = 4,
+        v5         = 5
     };
 
 private:
-    Version               m_version;
+    Version         m_version;
 
     std::bitset<32> m_time_low;
     std::bitset<16> m_time_mid;
@@ -34,7 +33,6 @@ private:
 
     void parse_version();
     void v1_uuid();
-    void v2_uuid();
     void v3_uuid();
     void v4_uuid();
     void v5_uuid();
@@ -43,8 +41,7 @@ public:
     /*
      * Constructors
      */
-    // No-args constructor creates a nil UUID: 00000000-0000-0000-0000-000000000000
-    // std::bitset defaults to all 0's, so nothing special here
+    // No-args constructor creates a Nil UUID
     UUID();
     // Version constructor
     UUID(const Version& ver);
@@ -70,8 +67,8 @@ public:
     friend std::istream& operator>>(std::istream& is, UUID& u);
     friend bool operator==(const UUID& lhs, const UUID& rhs);
     friend bool operator!=(const UUID& lhs, const UUID& rhs);
-    friend bool operator>(const UUID& lhs, const UUID& rhs);
-    friend bool operator<(const UUID& lhs, const UUID& rhs);
+    friend bool operator> (const UUID& lhs, const UUID& rhs);
+    friend bool operator< (const UUID& lhs, const UUID& rhs);
     friend bool operator>=(const UUID& lhs, const UUID& rhs);
     friend bool operator<=(const UUID& lhs, const UUID& rhs);
 };
