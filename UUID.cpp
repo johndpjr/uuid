@@ -32,7 +32,7 @@ UUID::UUID(const Version& ver)
 }
 
 UUID::UUID(const UUID &u)
-    : m_version{u.m_version},
+    : m_version{u.m_version}, m_variant{u.m_variant},
       m_time_low{u.m_time_low}, m_time_mid{u.m_time_mid},
       m_time_hi_and_version{u.m_time_hi_and_version},
       m_clock_seq_hi_and_reserved{u.m_clock_seq_hi_and_reserved},
@@ -57,6 +57,10 @@ UUID::UUID(const std::string& uuid_str)
  */
 unsigned int UUID::get_version() const {
     return m_version;
+}
+
+unsigned int UUID::get_variant() const {
+    return m_variant;
 }
 
 void UUID::parse_version() {

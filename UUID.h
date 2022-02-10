@@ -13,6 +13,11 @@
 class UUID
 {
 public:
+    // The Version affects how the UUID is generated
+    // Version 1: Datetime and MAC Address
+    // Version 3: Namespace-based (MD5)
+    // Version 4: Random
+    // Version 5: Namespace-based (SHA-1)
     enum Version {
         Unresolved = 0,
         v1         = 1,
@@ -20,9 +25,21 @@ public:
         v4         = 4,
         v5         = 5
     };
+    // The Variant affects the format and encoding of the UUID
+    // From RFC 4122:
+    //      Msb0  Msb1  Msb2  Description
+    //      0     x     x     Reserved, NCS backward compatibility.
+    //      1     0     x     The variant specified in this document.
+    //      1     1     0     Reserved, Microsoft Corporation backward compatibility
+    enum Variant {
+        Apollo_NCS = 0,
+        RFC_4122   = 1,
+        Microsoft  = 2
+    };
 
 private:
     Version         m_version;
+    Variant         m_variant;
 
     std::bitset<32> m_time_low;
     std::bitset<16> m_time_mid;
@@ -53,11 +70,17 @@ public:
     /*
      * Functions
      */
+    // Returns the version number of the UUID
+    // Ex: For a Version 4 UUID, returns 4
     [[nodiscard]] unsigned int get_version() const;
-    // Get a string representation of the UUID
+    // Returns the variant of the UUID
+    // Ex: For a Variant 1 UUID, returns 1
+    [[nodiscard]] unsigned int get_variant() const;
+    // Returns a hexadecimal string representation of the UUID
+    // Ex: "123e4567-e89b-12d3-a456-426655440000"
     [[nodiscard]] std::string str() const;
-    // Get a string representation of the UUID as a URN
-    // Ex: urn:uuid:{uuid}
+    // Returns a UUID string presented as a URN
+    // Ex: "urn:uuid:123e4567-e89b-12d3-a456-426655440000"
     [[nodiscard]] std::string urn_str() const;
 
     /*
