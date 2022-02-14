@@ -8,6 +8,7 @@
 #include <iomanip>
 
 #include "HelperFunctions.h"
+#include "constants.h"
 
 
 class UUID
@@ -47,6 +48,8 @@ private:
     std::bitset<8>  m_clock_seq_hi_and_reserved;
     std::bitset<8>  m_clock_seq_low;
     std::bitset<48> m_node;
+
+    static unsigned int uuids_this_tick;
 
     void parse_version();
     void v1_uuid();

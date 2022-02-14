@@ -1,5 +1,7 @@
 #include "UUID.h"
 
+unsigned int UUID::uuids_this_tick {0};
+
 /*
  * Constructors
  */
@@ -81,10 +83,14 @@ void UUID::parse_version() {
 }
 
 void UUID::v1_uuid() {
-    uint64_t uuid_time {get_uuid_utc_base_time_ticks()};
+    /*
+     * time-mid
+     */
+    uint64_t uuid_time {get_uuid_ticks()};
 
     // Low 4 bytes of the time
     m_time_low = std::bitset<32>{uuid_time & 0xFFFFFFFF};
+    // FIXME: maybe it isn't necessary to shift uuid_time?
     uuid_time >>= 32;  // shift 32 bits
     // Mid 2 bytes of the time
     m_time_mid = std::bitset<16>{uuid_time & 0xFFFF};
@@ -92,8 +98,25 @@ void UUID::v1_uuid() {
     // Add 4 bit version and high 12 bits of the time
     m_time_hi_and_version = std::bitset<16>{0x1000 | (uuid_time & 0xFFF)};
 
-    // TODO: clock-seq-and-reserved
-    // TODO: clock-seq-low
+    /*
+     * clock-seq-hi-and-reserved
+     * clock-seq-low
+     */
+    // We've requested too many UUIDs for one microsecond
+    // 13 bits of the clock sequence can only store up to 8191 decimal
+    if (uuids_this_tick > constants::UUIDS_PER_MICROSECOND_TICK - 1) {
+        uint64_t last_uuid_time {get_uuid_ticks()};
+        // Stall the clock until the microsecond passes
+        while (uuid_time == last_uuid_time) {
+            last_uuid_time = get_uuid_ticks();
+        }
+        uuids_this_tick = 0;
+    }
+    // FIXME: this is a hardcoded variant 1 (0b10x)
+    m_clock_seq_hi_and_reserved = std::bitset<8>{0x80 | (uuids_this_tick>>8)};
+    m_clock_seq_low = std::bitset<8>{uuids_this_tick & 0xFF};
+    ++uuids_this_tick;
+
     // TODO: node
 }
 
@@ -107,7 +130,7 @@ void UUID::v5_uuid() {
 }
 
 std::string UUID::str() const {
-    std::stringstream ss;
+    std::ostringstream ss;
     ss << std::hex << std::setfill('0');
 
     ss << std::setw(8 ) << m_time_low.to_ulong()            << '-'  // time-low
