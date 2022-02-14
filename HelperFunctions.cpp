@@ -32,10 +32,11 @@ std::string get_bin_str_from_hex_str(const std::string& hex_str) {
     return bin_str;
 }
 
-uint64_t get_uuid_utc_base_time_ticks() {
+uint64_t get_uuid_ticks() {
     auto now = std::chrono::system_clock::now();
     uint64_t ticks {constants::DELTA_100ns_TICKS_GREG_AND_UNIX_EPOCH};
-    // Multiply timestamp (in microseconds) by 10 to get ticks sinch epoch
+    // The system clock has microsecond granularity, so multiply the number
+    // of microsecond ticks since UNIX epoch by 10 to get ticks since epoch
     // FIXME: make sure there are no duplicate uuids in generation
     ticks += std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() * 10;
     return ticks;
