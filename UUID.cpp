@@ -104,6 +104,7 @@ void UUID::v1_uuid() {
      */
     // We've requested too many UUIDs for one microsecond
     // 13 bits of the clock sequence can only store up to 8191 decimal
+    // The other 3 bits MSB of the clock sequence are reserved for the variant
     if (uuids_this_tick > constants::UUIDS_PER_MICROSECOND_TICK - 1) {
         uint64_t last_uuid_time {get_uuid_ticks()};
         // Stall the clock until the microsecond passes
