@@ -49,7 +49,8 @@ private:
     std::bitset<8>  m_clock_seq_low;
     std::bitset<48> m_node;
 
-    static unsigned int uuids_this_tick;
+    static uint64_t     s_last_uuid_time;
+    static unsigned int s_uuids_this_tick;
 
     void parse_version();
     void v1_uuid();

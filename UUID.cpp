@@ -1,6 +1,7 @@
 #include "UUID.h"
 
-unsigned int UUID::uuids_this_tick {0};
+uint64_t UUID::s_last_uuid_time      {get_uuid_ticks()};
+unsigned int UUID::s_uuids_this_tick {0};
 
 /*
  * Constructors
@@ -84,39 +85,43 @@ void UUID::parse_version() {
 
 void UUID::v1_uuid() {
     /*
+     * time-low
      * time-mid
+     * time-hi-and-version
      */
     uint64_t uuid_time {get_uuid_ticks()};
+    ++s_uuids_this_tick;
+    // If the system clock hasn't ticked ( >1 UUID requested in 1 microsecond),
+    //  increment the timestamp to simulate a 100ns tick passing
+    if (uuid_time == s_last_uuid_time) {
+        uuid_time += s_uuids_this_tick;
+        if (s_uuids_this_tick > 10) {
+            while (uuid_time == s_last_uuid_time) {
+                uuid_time = get_uuid_ticks();
+            }
+        }
+    }
+    else {
+        s_uuids_this_tick = 0;
+    }
 
-    // Low 4 bytes of the time
-    m_time_low = std::bitset<32>{uuid_time & 0xFFFFFFFF};
-    // FIXME: maybe it isn't necessary to shift uuid_time?
-    uuid_time >>= 32;  // shift 32 bits
-    // Mid 2 bytes of the time
-    m_time_mid = std::bitset<16>{uuid_time & 0xFFFF};
-    uuid_time >>= 16;  // shift 16 bits
-    // Add 4 bit version and high 12 bits of the time
-    m_time_hi_and_version = std::bitset<16>{0x1000 | (uuid_time & 0xFFF)};
+    // Construct low 4 bytes of the time
+    m_time_low = uuid_time & 0xFFFFFFFF;  // 32 bits
+    // Construct mid 2 bytes of the time
+    // Shift 32 bits to remove the low 4 bytes
+    m_time_mid = (uuid_time>>32) & 0xFFFF;  // 16 bits
+    // Construct 4 bit version and high 12 bits of the time
+    // Shift 48 bits (32 + 16) to remove the low and mid 6 bytes
+    m_time_hi_and_version = 0x1000 | ((uuid_time>>48) & 0xFFF);  // 16 bits
 
+    s_last_uuid_time = uuid_time - s_uuids_this_tick;
     /*
      * clock-seq-hi-and-reserved
      * clock-seq-low
      */
-    // We've requested too many UUIDs for one microsecond
-    // 13 bits of the clock sequence can only store up to 8191 decimal
-    // The other 3 bits MSB of the clock sequence are reserved for the variant
-    if (uuids_this_tick > constants::UUIDS_PER_MICROSECOND_TICK - 1) {
-        uint64_t last_uuid_time {get_uuid_ticks()};
-        // Stall the clock until the microsecond passes
-        while (uuid_time == last_uuid_time) {
-            last_uuid_time = get_uuid_ticks();
-        }
-        uuids_this_tick = 0;
-    }
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    m_clock_seq_hi_and_reserved = std::bitset<8>{0x80 | (uuids_this_tick>>8)};
-    m_clock_seq_low = std::bitset<8>{uuids_this_tick & 0xFF};
-    ++uuids_this_tick;
+    // FIXME: randomize the clock sequence initially (and then increment... or not)
+    m_clock_seq_hi_and_reserved = 0x80;
 
     // TODO: node
 }
