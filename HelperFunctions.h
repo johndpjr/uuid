@@ -15,4 +15,7 @@ std::string get_bin_str_from_hex_str(const std::string& hex_str);
 // (with microsecond granularity)
 uint64_t get_uuid_ticks();
 
+// Returns a random 16-bit number used for the clock sequence
+uint16_t get_clock_seq();
+
 #endif //UUID__HELPERFUNCTIONS_H

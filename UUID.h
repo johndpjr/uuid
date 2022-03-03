@@ -32,10 +32,12 @@ public:
     //      0     x     x     Reserved, NCS backward compatibility.
     //      1     0     x     The variant specified in this document.
     //      1     1     0     Reserved, Microsoft Corporation backward compatibility
+    //      1     1     1     Reserved for future definition.
     enum Variant {
-        Apollo_NCS = 0,
-        RFC_4122   = 1,
-        Microsoft  = 2
+        Apollo_NCS  = 0,
+        RFC_4122    = 1,
+        Microsoft   = 2,
+        Future_Def  = 3
     };
 
 private:
@@ -49,8 +51,9 @@ private:
     std::bitset<8>  m_clock_seq_low;
     std::bitset<48> m_node;
 
-    static uint64_t     s_last_uuid_time;
-    static unsigned int s_uuids_this_tick;
+    static uint64_t        s_last_uuid_time;
+    static unsigned int    s_uuids_this_tick;
+    static uint16_t        s_clock_seq;
 
     void parse_version();
     void v1_uuid();

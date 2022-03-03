@@ -2,6 +2,7 @@
 
 uint64_t UUID::s_last_uuid_time      {get_uuid_ticks()};
 unsigned int UUID::s_uuids_this_tick {0};
+uint16_t UUID::s_clock_seq           {get_clock_seq()};
 
 /*
  * Constructors
@@ -95,7 +96,7 @@ void UUID::v1_uuid() {
     //  increment the timestamp to simulate a 100ns tick passing
     if (uuid_time == s_last_uuid_time) {
         uuid_time += s_uuids_this_tick;
-        if (s_uuids_this_tick > 10) {
+        if (s_uuids_this_tick > constants::MAX_UUIDS_PER_TICK) {
             while (uuid_time == s_last_uuid_time) {
                 uuid_time = get_uuid_ticks();
             }
@@ -120,8 +121,10 @@ void UUID::v1_uuid() {
      * clock-seq-low
      */
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    // FIXME: randomize the clock sequence initially (and then increment... or not)
-    m_clock_seq_hi_and_reserved = 0x80;
+    srand(uuid_time);
+    m_clock_seq_low = s_clock_seq & 0xFF;
+    m_clock_seq_hi_and_reserved = (s_clock_seq>>8) & 0x1F;
+    m_clock_seq_hi_and_reserved |= 0x80;
 
     // TODO: node
 }

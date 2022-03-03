@@ -40,3 +40,8 @@ uint64_t get_uuid_ticks() {
     ticks += std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() * 10;
     return ticks;
 }
+
+uint16_t get_clock_seq() {
+    srand(get_uuid_ticks());
+    return static_cast<uint16_t>(rand() % UINT16_MAX);
+}
