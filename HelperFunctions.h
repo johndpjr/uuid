@@ -15,6 +15,4 @@ std::string get_bin_str_from_hex_str(const std::string& hex_str);
 // (with microsecond granularity)
 uint64_t get_uuid_ticks();
 
-std::bitset<128> md5();
-
 #endif //UUID__HELPERFUNCTIONS_H
