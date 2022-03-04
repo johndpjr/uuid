@@ -24,13 +24,13 @@ UUID::UUID(const Version& ver)
             v1_uuid();
             break;
         case Version::v3:
-            // TODO: implement UUID version 3
+            v3_uuid();
             break;
         case Version::v4:
-            // TODO: implement UUID version 4
+            v4_uuid();
             break;
         case Version::v5:
-            // TODO: implement UUID version 5
+            v5_uuid();
             break;
     }
 }
@@ -85,8 +85,7 @@ void UUID::parse_version() {
 }
 
 void UUID::v1_uuid() {
-    /*
-     * time-low
+    /* time-low
      * time-mid
      * time-hi-and-version
      */
@@ -116,8 +115,7 @@ void UUID::v1_uuid() {
     m_time_hi_and_version = 0x1000 | ((uuid_time>>48) & 0xFFF);  // 16 bits
 
     s_last_uuid_time = uuid_time - s_uuids_this_tick;
-    /*
-     * clock-seq-hi-and-reserved
+    /* clock-seq-hi-and-reserved
      * clock-seq-low
      */
     // FIXME: this is a hardcoded variant 1 (0b10x)
@@ -125,18 +123,29 @@ void UUID::v1_uuid() {
     m_clock_seq_hi_and_reserved = (s_clock_seq>>8) & 0x1F;
     m_clock_seq_hi_and_reserved |= 0x80;
 
-    /*
-     * node
-     */
+    /* node */
     m_node = s_mac_adr;
 }
 
+// TODO: implement UUID version 3
 void UUID::v3_uuid() {
 }
 
 void UUID::v4_uuid() {
+    // Set the version and variant bit fields
+    m_time_hi_and_version.set(14);
+    // FIXME: this is a hardcoded variant 1 (0b10x)
+    m_clock_seq_hi_and_reserved.set(7);
+    // Set all other bits to pseudo-randomly created values
+    randomize_bitset(m_time_low);
+    randomize_bitset(m_time_mid);
+    // TODO: randomize m_time_hi_and_version       (exclude version bits)
+    // TODO: randomize m_clock_seq_hi_and_reserved (exclude variant bits)
+    randomize_bitset(m_clock_seq_low);
+    randomize_bitset(m_node);
 }
 
+// TODO: implement UUID version 5
 void UUID::v5_uuid() {
 }
 
