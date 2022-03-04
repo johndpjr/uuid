@@ -63,3 +63,21 @@ std::bitset<48> get_node() {
 
     return node;
 }
+
+// FIXME: very slow - 136,550 per second generation (should support 10 million/sec)
+template <size_t N>
+void randomize_bitset(std::bitset<N>& bitset) {
+    srand(get_uuid_ticks());
+    for (size_t i{0}; i<bitset.size(); ++i) {
+        if (rand() % 2) {
+            bitset.set(i);
+        }
+    }
+}
+// FIXME: add constants for field sizes, like NODE_SIZE
+template void randomize_bitset<32>(std::bitset<32>&);
+template void randomize_bitset<16>(std::bitset<16>&);
+//template void randomize_bitset<16>(std::bitset<16>&);
+template void randomize_bitset<8>(std::bitset<8>&);
+//template void randomize_bitset<8>(std::bitset<8>&);
+template void randomize_bitset<48>(std::bitset<48>&);

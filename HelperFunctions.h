@@ -22,4 +22,7 @@ uint16_t get_clock_seq();
 // Currently just pseudo-randomly generates a MAC Address
 std::bitset<48> get_node();
 
+template <size_t N>
+void randomize_bitset(std::bitset<N>& bitset);
+
 #endif //UUID__HELPERFUNCTIONS_H
