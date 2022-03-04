@@ -45,3 +45,21 @@ uint16_t get_clock_seq() {
     srand(get_uuid_ticks());
     return static_cast<uint16_t>(rand() % UINT16_MAX);
 }
+
+std::bitset<48> get_node() {
+    // FIXME: find actual MAC Address of computer
+    // TODO: give option to user to randomly create MAC Address (security concerns)
+    srand(get_uuid_ticks());
+    std::bitset<48> node;
+    // Set the multicast bit (least-significant bit)
+    //  since the MAC Address is pseudo-randomly created
+    node.set(0);
+    for (size_t i{1}; i<48; ++i) {
+        // FIXME: using rand() isn't recommended, so use <random>
+        if (rand() % 2) {
+            node.set(i);
+        }
+    }
+
+    return node;
+}
