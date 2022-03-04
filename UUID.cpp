@@ -3,6 +3,7 @@
 uint64_t UUID::s_last_uuid_time      {get_uuid_ticks()};
 unsigned int UUID::s_uuids_this_tick {0};
 uint16_t UUID::s_clock_seq           {get_clock_seq()};
+std::bitset<48> UUID::s_mac_adr      {get_node()};
 
 /*
  * Constructors
@@ -20,7 +21,6 @@ UUID::UUID(const Version& ver)
         case Version::Unresolved:
             break;
         case Version::v1:
-            // TODO: implement UUID version 1
             v1_uuid();
             break;
         case Version::v3:
@@ -121,12 +121,14 @@ void UUID::v1_uuid() {
      * clock-seq-low
      */
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    srand(uuid_time);
     m_clock_seq_low = s_clock_seq & 0xFF;
     m_clock_seq_hi_and_reserved = (s_clock_seq>>8) & 0x1F;
     m_clock_seq_hi_and_reserved |= 0x80;
 
-    // TODO: node
+    /*
+     * node
+     */
+    m_node = s_mac_adr;
 }
 
 void UUID::v3_uuid() {

@@ -56,6 +56,7 @@ private:
     static uint64_t        s_last_uuid_time;
     static unsigned int    s_uuids_this_tick;
     static uint16_t        s_clock_seq;
+    static std::bitset<48> s_mac_adr;
 
     void parse_version();
     void v1_uuid();
