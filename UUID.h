@@ -14,11 +14,12 @@
 class UUID
 {
 public:
-    // The Version affects how the UUID is generated
-    // Version 1: Datetime and MAC Address
-    // Version 3: Namespace-based (MD5)
-    // Version 4: Random
-    // Version 5: Namespace-based (SHA-1)
+    /* The Version affects how the UUID is generated
+           Version 1: Datetime and MAC Address
+           Version 3: Namespace-based (MD5)
+           Version 4: Random
+           Version 5: Namespace-based (SHA-1)
+     */
     enum Version {
         Unresolved = 0,
         v1         = 1,
@@ -26,13 +27,14 @@ public:
         v4         = 4,
         v5         = 5
     };
-    // The Variant affects the format and encoding of the UUID
-    // From RFC 4122:
-    //      Msb0  Msb1  Msb2  Description
-    //      0     x     x     Reserved, NCS backward compatibility.
-    //      1     0     x     The variant specified in this document.
-    //      1     1     0     Reserved, Microsoft Corporation backward compatibility
-    //      1     1     1     Reserved for future definition.
+    /* The Variant affects the format and encoding of the UUID
+        From RFC 4122:
+            Msb0  Msb1  Msb2  Description
+            0     x     x     Reserved, NCS backward compatibility.
+            1     0     x     The variant specified in this document.
+            1     1     0     Reserved, Microsoft Corporation backward compatibility
+            1     1     1     Reserved for future definition.
+     */
     enum Variant {
         Apollo_NCS  = 0,
         RFC_4122    = 1,
