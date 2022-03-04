@@ -10,6 +10,7 @@
 #include "HelperFunctions.h"
 #include "constants.h"
 
+using namespace constants;
 
 class UUID
 {
@@ -46,12 +47,12 @@ private:
     Version         m_version;
     Variant         m_variant;
 
-    std::bitset<32> m_time_low;
-    std::bitset<16> m_time_mid;
-    std::bitset<16> m_time_hi_and_version;
-    std::bitset<8>  m_clock_seq_hi_and_reserved;
-    std::bitset<8>  m_clock_seq_low;
-    std::bitset<48> m_node;
+    std::bitset<TIME_LOW_SIZE>                   m_time_low;
+    std::bitset<TIME_MID_SIZE>                   m_time_mid;
+    std::bitset<TIME_HI_AND_VERSION_SIZE>        m_time_hi_and_version;
+    std::bitset<CLOCK_SEQ_HI_AND_RESERVED_SIZE>  m_clock_seq_hi_and_reserved;
+    std::bitset<CLOCK_SEQ_LOW_SIZE>              m_clock_seq_low;
+    std::bitset<NODE_SIZE>                       m_node;
 
     static uint64_t        s_last_uuid_time;
     static unsigned int    s_uuids_this_tick;

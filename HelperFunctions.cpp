@@ -1,4 +1,7 @@
 #include "HelperFunctions.h"
+#include "constants.h"
+
+using namespace constants;
 
 std::string get_bin_str_from_hex_str(const std::string& hex_str) {
     std::string bin_str;
@@ -34,7 +37,7 @@ std::string get_bin_str_from_hex_str(const std::string& hex_str) {
 
 uint64_t get_uuid_ticks() {
     auto now = std::chrono::system_clock::now();
-    uint64_t ticks {constants::DELTA_100ns_TICKS_GREG_AND_UNIX_EPOCH};
+    uint64_t ticks {DELTA_100ns_TICKS_GREG_AND_UNIX_EPOCH};
     // The system clock has microsecond granularity, so multiply the number
     //  of microsecond ticks since UNIX epoch by 10 to get ticks since epoch
     ticks += std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() * 10;
@@ -74,10 +77,9 @@ void randomize_bitset(std::bitset<N>& bitset) {
         }
     }
 }
-// FIXME: add constants for field sizes, like NODE_SIZE
-template void randomize_bitset<32>(std::bitset<32>&);
-template void randomize_bitset<16>(std::bitset<16>&);
-//template void randomize_bitset<16>(std::bitset<16>&);
-template void randomize_bitset<8>(std::bitset<8>&);
-//template void randomize_bitset<8>(std::bitset<8>&);
-template void randomize_bitset<48>(std::bitset<48>&);
+template void randomize_bitset<TIME_LOW_SIZE>(std::bitset<TIME_LOW_SIZE>&);
+template void randomize_bitset<TIME_MID_SIZE>(std::bitset<TIME_MID_SIZE>&);
+//template void randomize_bitset<TIME_HI_AND_VERSION_SIZE>(std::bitset<TIME_HI_AND_VERSION_SIZE>&);
+template void randomize_bitset<CLOCK_SEQ_LOW_SIZE>(std::bitset<CLOCK_SEQ_LOW_SIZE>&);
+//template void randomize_bitset<CLOCK_SEQ_HI_AND_RESERVED_SIZE>(std::bitset<CLOCK_SEQ_HI_AND_RESERVED_SIZE>&);
+template void randomize_bitset<NODE_SIZE>(std::bitset<NODE_SIZE>&);

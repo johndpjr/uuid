@@ -1,9 +1,9 @@
 #include "UUID.h"
 
-uint64_t UUID::s_last_uuid_time      {get_uuid_ticks()};
-unsigned int UUID::s_uuids_this_tick {0};
-uint16_t UUID::s_clock_seq           {get_clock_seq()};
-std::bitset<48> UUID::s_mac_adr      {get_node()};
+uint64_t UUID::s_last_uuid_time        {get_uuid_ticks()};
+unsigned int UUID::s_uuids_this_tick   {0};
+uint16_t UUID::s_clock_seq             {get_clock_seq()};
+std::bitset<NODE_SIZE> UUID::s_mac_adr {get_node()};
 
 /*
  * Constructors
@@ -95,7 +95,7 @@ void UUID::v1_uuid() {
     //  increment the timestamp to simulate a 100ns tick passing
     if (uuid_time == s_last_uuid_time) {
         uuid_time += s_uuids_this_tick;
-        if (s_uuids_this_tick > constants::MAX_UUIDS_PER_TICK) {
+        if (s_uuids_this_tick > MAX_UUIDS_PER_TICK) {
             while (uuid_time == s_last_uuid_time) {
                 uuid_time = get_uuid_ticks();
             }

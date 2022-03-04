@@ -10,5 +10,14 @@ namespace constants {
     // Masks out the 3 most-significant bits of the clock sequence
     //  to leave room for the variant
     const unsigned int CLOCK_SEQ_MASK {0x1FFF};
+
+    /* Field Sizes
+     */
+    const size_t TIME_LOW_SIZE                  {32};
+    const size_t TIME_MID_SIZE                  {16};
+    const size_t TIME_HI_AND_VERSION_SIZE       {16};
+    const size_t CLOCK_SEQ_HI_AND_RESERVED_SIZE { 8};
+    const size_t CLOCK_SEQ_LOW_SIZE             { 8};
+    const size_t NODE_SIZE                      {48};
 }
 #endif //UUID__CONSTANTS_H
