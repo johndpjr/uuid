@@ -1,7 +1,6 @@
 #ifndef UUID_EXEC__UUID_H
 #define UUID_EXEC__UUID_H
 
-#include <bitset>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -44,22 +43,22 @@ public:
     };
 
 private:
-    Version         m_version;
-    Variant         m_variant;
+    Version m_version;
+    Variant m_variant;
 
-    std::bitset<TIME_LOW_SIZE>                   m_time_low;
-    std::bitset<TIME_MID_SIZE>                   m_time_mid;
-    std::bitset<TIME_HI_AND_VERSION_SIZE>        m_time_hi_and_version;
-    std::bitset<CLOCK_SEQ_HI_AND_RESERVED_SIZE>  m_clock_seq_hi_and_reserved;
-    std::bitset<CLOCK_SEQ_LOW_SIZE>              m_clock_seq_low;
-    std::bitset<NODE_SIZE>                       m_node;
+    uint32_t m_time_low;                   // 32 bits
+    uint16_t m_time_mid;                   // 16 bits
+    uint16_t m_time_hi_and_version;        // 16 bits
+    uint8_t  m_clock_seq_hi_and_reserved;  // 8 bits
+    uint8_t  m_clock_seq_low;              // 8 bits
+    // FIXME: change to 48 bits
+    uint64_t m_node;                       // 48 bits
 
-    static uint64_t        s_last_uuid_time;
-    static unsigned int    s_uuids_this_tick;
-    static uint16_t        s_clock_seq;
-    static std::bitset<48> s_mac_adr;
+    static uint64_t      s_last_uuid_time;
+    static unsigned int  s_uuids_this_tick;
+    static uint16_t      s_clock_seq;
+    static uint64_t      s_mac_adr;
 
-    void parse_version();
     void v1_uuid();
     void v3_uuid();
     void v4_uuid();

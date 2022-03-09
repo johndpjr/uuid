@@ -1,15 +1,21 @@
 #include "UUID.h"
 
-uint64_t UUID::s_last_uuid_time        {get_uuid_ticks()};
-unsigned int UUID::s_uuids_this_tick   {0};
-uint16_t UUID::s_clock_seq             {get_clock_seq()};
-std::bitset<NODE_SIZE> UUID::s_mac_adr {get_node()};
+uint64_t UUID::s_last_uuid_time       {get_uuid_ticks()};
+unsigned int UUID::s_uuids_this_tick  {0};
+uint16_t UUID::s_clock_seq            {get_clock_seq()};
+uint64_t UUID::s_mac_adr              {get_node()};
 
 /*
  * Constructors
  */
 UUID::UUID()
-    : m_version{Version::Nil}
+    : m_version{Version::Nil},
+      m_time_low{0},
+      m_time_mid{0},
+      m_time_hi_and_version{0},
+      m_clock_seq_hi_and_reserved{0},
+      m_clock_seq_low{0},
+      m_node{0}
 {
 }
 
@@ -17,8 +23,13 @@ UUID::UUID(const Version& ver)
     : m_version{ver}
 {
     switch(ver) {
-        // No action needed for a Nil version - it defaults to a Nil UUID
         case Version::Nil:
+            m_time_low = 0;
+            m_time_mid = 0;
+            m_time_hi_and_version = 0;
+            m_clock_seq_hi_and_reserved = 0;
+            m_clock_seq_low = 0;
+            m_node = 0;
             break;
         case Version::v1:
             v1_uuid();
@@ -46,14 +57,13 @@ UUID::UUID(const UUID &u)
 }
 
 UUID::UUID(const std::string& uuid_str)
-    : m_time_low{get_bin_str_from_hex_str(uuid_str.substr(0,8))},
-      m_time_mid{get_bin_str_from_hex_str(uuid_str.substr(9, 4))},
-      m_time_hi_and_version{get_bin_str_from_hex_str(uuid_str.substr(14, 4))},
-      m_clock_seq_hi_and_reserved{get_bin_str_from_hex_str(uuid_str.substr(19, 2))},
-      m_clock_seq_low{get_bin_str_from_hex_str(uuid_str.substr(21, 2))},
-      m_node{get_bin_str_from_hex_str(uuid_str.substr(24, 12))}
+    : m_time_low{static_cast<uint32_t>(std::stoul(uuid_str.substr(0, 8), nullptr, 16))},
+      m_time_mid{static_cast<uint16_t>(std::stoul(uuid_str.substr(9, 4), nullptr, 16))},
+      m_time_hi_and_version{static_cast<uint16_t>(std::stoul(uuid_str.substr(14, 4), nullptr, 16))},
+      m_clock_seq_hi_and_reserved{static_cast<uint8_t>(std::stoul(uuid_str.substr(19, 2), nullptr, 16))},
+      m_clock_seq_low{static_cast<uint8_t>(std::stoul(uuid_str.substr(21, 2), nullptr, 16))},
+      m_node{static_cast<uint64_t>(std::stoull(uuid_str.substr(24, 12), nullptr, 16))}
 {
-    parse_version();
 }
 
 /*
@@ -65,23 +75,6 @@ unsigned int UUID::get_version() const {
 
 unsigned int UUID::get_variant() const {
     return m_variant;
-}
-
-void UUID::parse_version() {
-    std::bitset<4> ver_set;
-    for (size_t i{12}; i<16; ++i) {
-        ver_set[i-12] = m_time_hi_and_version[i];
-    }
-
-    unsigned long ver {ver_set.to_ulong()};
-    switch (ver) {
-        case 1: m_version = Version::v1; break;
-        case 3: m_version = Version::v3; break;
-        case 4: m_version = Version::v4; break;
-        case 5: m_version = Version::v5; break;
-
-        default: m_version = Version::Nil;
-    }
 }
 
 void UUID::v1_uuid() {
@@ -132,17 +125,18 @@ void UUID::v3_uuid() {
 }
 
 void UUID::v4_uuid() {
-    // Set the version and variant bit fields
-    m_time_hi_and_version.set(14);
+    // Set all bits to pseudo-randomly created values
+    srand(get_uuid_ticks());
+    m_time_low = rand() % UINT32_MAX;
+    m_time_mid = rand() % UINT16_MAX;
+    m_time_hi_and_version = rand() % UINT16_MAX;
+    m_clock_seq_hi_and_reserved = rand() % UINT8_MAX;
+    m_clock_seq_low = rand() % UINT8_MAX;
+    m_node = rand() % UINT64_MAX;
+    // Set version and variant fields
+    m_time_hi_and_version |= 0x4000;
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    m_clock_seq_hi_and_reserved.set(7);
-    // Set all other bits to pseudo-randomly created values
-    randomize_bitset(m_time_low);
-    randomize_bitset(m_time_mid);
-    // TODO: randomize m_time_hi_and_version       (exclude version bits)
-    // TODO: randomize m_clock_seq_hi_and_reserved (exclude variant bits)
-    randomize_bitset(m_clock_seq_low);
-    randomize_bitset(m_node);
+    m_clock_seq_hi_and_reserved |= 0x80;
 }
 
 // TODO: implement UUID version 5
@@ -153,12 +147,12 @@ std::string UUID::str() const {
     std::ostringstream ss;
     ss << std::hex << std::setfill('0');
 
-    ss << std::setw(8 ) << m_time_low.to_ulong()            << '-'  // time-low
-       << std::setw(4 ) << m_time_mid.to_ulong()            << '-'  // time-mid
-       << std::setw(4 ) << m_time_hi_and_version.to_ulong() << '-'  // time-high-and-version
-       << std::setw(2 ) << m_clock_seq_hi_and_reserved.to_ulong()   // clock-seq-and-reserved
-       << std::setw(2 ) << m_clock_seq_low.to_ulong()       << '-'  // clock-seq-low
-       << std::setw(12) << m_node.to_ullong();                      // node
+    ss << std::setw(8 ) << m_time_low            << '-'   // time-low
+       << std::setw(4 ) << m_time_mid            << '-'   // time-mid
+       << std::setw(4 ) << m_time_hi_and_version << '-'   // time-high-and-version
+       << std::setw(2 ) << +m_clock_seq_hi_and_reserved   // clock-seq-and-reserved
+       << std::setw(2 ) << +m_clock_seq_low       << '-'  // clock-seq-low
+       << std::setw(12) << m_node;                        // node
 
     return ss.str();
 }
