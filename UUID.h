@@ -22,7 +22,7 @@ public:
            Version 5: Namespace-based (SHA-1)
      */
     enum Version {
-        Unresolved = 0,
+        Nil        = 0,
         v1         = 1,
         v3         = 3,
         v4         = 4,

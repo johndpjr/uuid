@@ -9,7 +9,7 @@ std::bitset<NODE_SIZE> UUID::s_mac_adr {get_node()};
  * Constructors
  */
 UUID::UUID()
-    : m_version{Version::Unresolved}
+    : m_version{Version::Nil}
 {
 }
 
@@ -17,8 +17,8 @@ UUID::UUID(const Version& ver)
     : m_version{ver}
 {
     switch(ver) {
-        // No action needed for an Unresolved version - it defaults to a Nil UUID
-        case Version::Unresolved:
+        // No action needed for a Nil version - it defaults to a Nil UUID
+        case Version::Nil:
             break;
         case Version::v1:
             v1_uuid();
@@ -80,7 +80,7 @@ void UUID::parse_version() {
         case 4: m_version = Version::v4; break;
         case 5: m_version = Version::v5; break;
 
-        default: m_version = Version::Unresolved;
+        default: m_version = Version::Nil;
     }
 }
 
