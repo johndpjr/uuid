@@ -126,13 +126,12 @@ void UUID::v3_uuid() {
 
 void UUID::v4_uuid() {
     // Set all bits to pseudo-randomly created values
-    srand(get_uuid_ticks());
-    m_time_low = rand() % UINT32_MAX;
-    m_time_mid = rand() % UINT16_MAX;
-    m_time_hi_and_version = rand() % UINT16_MAX;
-    m_clock_seq_hi_and_reserved = rand() % UINT8_MAX;
-    m_clock_seq_low = rand() % UINT8_MAX;
-    m_node = rand() % UINT64_MAX;
+    randomize<uint32_t>(m_time_low);
+    randomize<uint16_t>(m_time_mid);
+    randomize<uint16_t>(m_time_hi_and_version);
+    randomize<uint8_t>(m_clock_seq_hi_and_reserved);
+    randomize<uint8_t>(m_clock_seq_low);
+    randomize<uint64_t>(m_node);
     // Set version and variant fields
     m_time_hi_and_version |= 0x4000;
     // FIXME: this is a hardcoded variant 1 (0b10x)
@@ -147,12 +146,12 @@ std::string UUID::str() const {
     std::ostringstream ss;
     ss << std::hex << std::setfill('0');
 
-    ss << std::setw(8 ) << m_time_low            << '-'   // time-low
-       << std::setw(4 ) << m_time_mid            << '-'   // time-mid
-       << std::setw(4 ) << m_time_hi_and_version << '-'   // time-high-and-version
-       << std::setw(2 ) << +m_clock_seq_hi_and_reserved   // clock-seq-and-reserved
-       << std::setw(2 ) << +m_clock_seq_low       << '-'  // clock-seq-low
-       << std::setw(12) << m_node;                        // node
+    ss << std::setw(8 ) << m_time_low            << '-'  // time-low
+       << std::setw(4 ) << m_time_mid            << '-'  // time-mid
+       << std::setw(4 ) << m_time_hi_and_version << '-'  // time-high-and-version
+       << std::setw(2 ) << +m_clock_seq_hi_and_reserved  // clock-seq-and-reserved
+       << std::setw(2 ) << +m_clock_seq_low      << '-'  // clock-seq-low
+       << std::setw(12) << m_node;                       // node
 
     return ss.str();
 }

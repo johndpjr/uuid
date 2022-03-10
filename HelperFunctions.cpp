@@ -17,10 +17,26 @@ uint16_t get_clock_seq() {
     return rand() % UINT16_MAX;
 }
 
+// FIXME: random, but not on each seperate run
+template <typename T>
+void randomize(T& num) {
+    for (size_t i{0}; i<sizeof(num)*8; ++i) {
+        if (distribution(generator)) {
+            num |= 1;
+        }
+        num <<= 1;
+    }
+}
+template void randomize<uint32_t>(uint32_t&);
+template void randomize<uint16_t>(uint16_t&);
+//template void randomize<uint16_t>(uint16_t&);
+template void randomize<uint8_t>(uint8_t&);
+//template void randomize<uint8_t>(uint8_t&);
+template void randomize<uint64_t>(uint64_t&);
+
 uint64_t get_node() {
     // FIXME: find actual MAC Address of computer
     // TODO: give option to user to randomly create MAC Address (security concerns)
-    srand(get_uuid_ticks());
     // FIXME: use <random> instead of rand()
     uint64_t node {rand() % UINT64_MAX};
     // Set the multicast bit (least-significant bit)
