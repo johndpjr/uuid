@@ -24,12 +24,12 @@ UUID::UUID(const Version& ver)
 {
     switch(ver) {
         case Version::Nil:
-            m_time_low = 0;
-            m_time_mid = 0;
-            m_time_hi_and_version = 0;
+            m_time_low                  = 0;
+            m_time_mid                  = 0;
+            m_time_hi_and_version       = 0;
             m_clock_seq_hi_and_reserved = 0;
-            m_clock_seq_low = 0;
-            m_node = 0;
+            m_clock_seq_low             = 0;
+            m_node                      = 0;
             break;
         case Version::v1:
             v1_uuid();
@@ -80,8 +80,7 @@ unsigned int UUID::get_variant() const {
 void UUID::v1_uuid() {
     /* time-low
      * time-mid
-     * time-hi-and-version
-     */
+     * time-hi-and-version */
     uint64_t uuid_time {get_uuid_ticks()};
     ++s_uuids_this_tick;
     // If the system clock hasn't ticked ( >1 UUID requested in 1 microsecond),
@@ -109,8 +108,7 @@ void UUID::v1_uuid() {
 
     s_last_uuid_time = uuid_time - s_uuids_this_tick;
     /* clock-seq-hi-and-reserved
-     * clock-seq-low
-     */
+     * clock-seq-low */
     // FIXME: this is a hardcoded variant 1 (0b10x)
     m_clock_seq_low = s_clock_seq & 0xFF;
     m_clock_seq_hi_and_reserved = (s_clock_seq>>8) & 0x1F;

@@ -21,11 +21,11 @@ public:
            Version 5: Namespace-based (SHA-1)
      */
     enum Version {
-        Nil        = 0,
-        v1         = 1,
-        v3         = 3,
-        v4         = 4,
-        v5         = 5
+        Nil = 0,
+        v1  = 1,
+        v3  = 3,
+        v4  = 4,
+        v5  = 5
     };
     /* The Variant affects the format and encoding of the UUID
         From RFC 4122:
@@ -36,10 +36,10 @@ public:
             1     1     1     Reserved for future definition.
      */
     enum Variant {
-        Apollo_NCS  = 0,
-        RFC_4122    = 1,
-        Microsoft   = 2,
-        Future_Def  = 3
+        Apollo_NCS = 0,
+        RFC_4122   = 1,
+        Microsoft  = 2,
+        Future_Def = 3
     };
 
 private:
@@ -68,29 +68,49 @@ public:
     /*
      * Constructors
      */
-    // No-args constructor creates a Nil UUID
+    /**
+     * No-args constructor creates a Nil Version UUID
+     *  where all 128 bits are set to 0 (00000000-0000-0000-0000-000000000000)
+     */
     UUID();
-    // Version constructor
+    /**
+     * Version constructor
+     * @param ver
+     */
     UUID(const Version& ver);
-    // Copy constructor
+    /**
+     * Copy constructor copies uuid
+     * @param uuid
+     */
     UUID(const UUID &uuid);
-    // String constructor
+    /**
+     * String constructor constructs a UUID from a string
+     * @param uuid_str
+     */
     UUID(const std::string& uuid_str);
 
     /*
      * Functions
      */
-    // Returns the version number of the UUID
-    // Ex: For a Version 4 UUID, returns 4
+    /**
+     * @return Version number of the UUID
+     *  (Ex: returns 4 from Version 4 UUID)
+     */
     [[nodiscard]] unsigned int get_version() const;
-    // Returns the variant of the UUID
-    // Ex: For a Variant 1 UUID, returns 1
+    /**
+     * @return Variant number of the UUID
+     *  (Ex: returns 1 from Variant 1 UUID)
+     */
     [[nodiscard]] unsigned int get_variant() const;
-    // Returns a hexadecimal string representation of the UUID
-    // Ex: "123e4567-e89b-12d3-a456-426655440000"
+    /**
+     * @return A hexadecimal string representation of the UUID
+     *  (Ex: "123e4567-e89b-12d3-a456-426614174000")
+     */
     [[nodiscard]] std::string str() const;
-    // Returns a UUID string presented as a URN
-    // Ex: "urn:uuid:123e4567-e89b-12d3-a456-426655440000"
+    /**
+     * @return A Uniform Resource Name (URN) string representation of the UUID
+     *  (Ex: "urn:uuid:123e4567-e89b-12d3-a456-426614174000")
+     */
     [[nodiscard]] std::string urn_str() const;
 
     /*

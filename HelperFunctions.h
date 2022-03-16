@@ -1,7 +1,6 @@
 #ifndef UUID__HELPERFUNCTIONS_H
 #define UUID__HELPERFUNCTIONS_H
 
-#include <bitset>
 #include <string>
 #include <chrono>
 #include <random>
