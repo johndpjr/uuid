@@ -13,13 +13,17 @@ uint64_t get_uuid_ticks() {
 }
 
 uint16_t get_clock_seq() {
-    srand(get_uuid_ticks());
-    return rand() % UINT16_MAX;
+    uint16_t clock_seq {0};
+    randomize<uint16_t>(clock_seq);
+    return clock_seq;
 }
 
 // FIXME: random, but not on each seperate run
 template <typename T>
 void randomize(T& num) {
+    static std::random_device rd;
+    static std::default_random_engine generator {rd()};
+    static std::bernoulli_distribution distribution {0.5};
     for (size_t i{0}; i<sizeof(num)*8; ++i) {
         if (distribution(generator)) {
             num |= 1;
@@ -36,10 +40,8 @@ template void randomize<uint8_t>(uint8_t&);      // clock-seq-and-reserved
 template void randomize<uint64_t>(uint64_t&);    // node
 
 uint64_t get_node() {
-    // FIXME: find actual MAC Address of computer
+    // TODO: find actual MAC Address of computer
     // TODO: give option to user to randomly create MAC Address (security concerns)
-    // FIXME: use <random> instead of rand()
-//    uint64_t node {rand() % UINT64_MAX};
     uint64_t node {0};
     randomize<uint64_t>(node);
     // Set the multicast bit (least-significant bit)

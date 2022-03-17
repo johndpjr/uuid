@@ -7,10 +7,6 @@
 
 #include "constants.h"
 
-static std::random_device rd;
-static std::default_random_engine generator {rd()};
-static std::bernoulli_distribution distribution {0.5};
-
 // Returns the number of 100ns ticks since October 15, 1582
 // (with microsecond granularity)
 uint64_t get_uuid_ticks();
