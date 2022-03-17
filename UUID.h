@@ -15,10 +15,11 @@ class UUID
 {
 public:
     /* The Version affects how the UUID is generated
-           Version 1: Datetime and MAC Address
-           Version 3: Namespace-based (MD5)
-           Version 4: Random
-           Version 5: Namespace-based (SHA-1)
+           Version Nil: Special Nil UUID
+           Version 1  : Datetime and MAC Address
+           Version 3  : Namespace-based (MD5)
+           Version 4  : Random
+           Version 5  : Namespace-based (SHA-1)
      */
     enum Version {
         Nil = 0,

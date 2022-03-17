@@ -48,5 +48,5 @@ uint64_t get_node() {
     //  since the MAC Address is pseudo-randomly created
     node |= 1;
 
-    return node;
+    return node & 0xFFFFFFFFFFFF;  // get 48 LSB bits
 }

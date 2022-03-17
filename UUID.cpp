@@ -130,10 +130,11 @@ void UUID::v4_uuid() {
     randomize<uint8_t>(m_clock_seq_hi_and_reserved);
     randomize<uint8_t>(m_clock_seq_low);
     randomize<uint64_t>(m_node);
+    m_node &= 0xFFFFFFFFFFFF;
     // Set version and variant fields
-    m_time_hi_and_version |= 0x4000;
+    m_time_hi_and_version &= 0x4FFF;
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    m_clock_seq_hi_and_reserved |= 0x80;
+    m_clock_seq_hi_and_reserved &= 0xBF;
 }
 
 // TODO: implement UUID version 5
