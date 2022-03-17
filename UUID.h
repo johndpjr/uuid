@@ -52,13 +52,12 @@ private:
     uint16_t m_time_hi_and_version;        // 16 bits
     uint8_t  m_clock_seq_hi_and_reserved;  // 8 bits
     uint8_t  m_clock_seq_low;              // 8 bits
-    // FIXME: change to 48 bits
-    uint64_t m_node;                       // 48 bits
+    uint8_t  m_node[6];                    // 48 bits
 
     static uint64_t      s_last_uuid_time;
     static unsigned int  s_uuids_this_tick;
     static uint16_t      s_clock_seq;
-    static uint64_t      s_mac_adr;
+    static uint8_t*      s_mac_adr;
 
     void v1_uuid();
     void v3_uuid();

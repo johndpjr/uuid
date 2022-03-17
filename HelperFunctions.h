@@ -19,6 +19,6 @@ void randomize(T& num);
 
 // Returns the MAC Address of the computer
 // Currently just pseudo-randomly generates a MAC Address
-uint64_t get_node();
+uint8_t* get_node();
 
 #endif //UUID__HELPERFUNCTIONS_H

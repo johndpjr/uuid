@@ -3,7 +3,7 @@
 uint64_t UUID::s_last_uuid_time       {get_uuid_ticks()};
 unsigned int UUID::s_uuids_this_tick  {0};
 uint16_t UUID::s_clock_seq            {get_clock_seq()};
-uint64_t UUID::s_mac_adr              {get_node()};
+uint8_t* UUID::s_mac_adr        {get_node()};
 
 /*
  * Constructors
@@ -29,7 +29,7 @@ UUID::UUID(const Version& ver)
             m_time_hi_and_version       = 0;
             m_clock_seq_hi_and_reserved = 0;
             m_clock_seq_low             = 0;
-            m_node                      = 0;
+            m_node[0]=0; m_node[1]=0; m_node[2]=0; m_node[3]=0; m_node[4]=0; m_node[5]=0;
             break;
         case Version::v1:
             v1_uuid();
@@ -52,7 +52,8 @@ UUID::UUID(const UUID &u)
       m_time_hi_and_version{u.m_time_hi_and_version},
       m_clock_seq_hi_and_reserved{u.m_clock_seq_hi_and_reserved},
       m_clock_seq_low{u.m_clock_seq_low},
-      m_node{u.m_node}
+      m_node{u.m_node[0], u.m_node[1], u.m_node[2],
+             u.m_node[3], u.m_node[4], u.m_node[5]}
 {
 }
 
@@ -62,7 +63,12 @@ UUID::UUID(const std::string& uuid_str)
       m_time_hi_and_version{static_cast<uint16_t>(std::stoul(uuid_str.substr(14, 4), nullptr, 16))},
       m_clock_seq_hi_and_reserved{static_cast<uint8_t>(std::stoul(uuid_str.substr(19, 2), nullptr, 16))},
       m_clock_seq_low{static_cast<uint8_t>(std::stoul(uuid_str.substr(21, 2), nullptr, 16))},
-      m_node{static_cast<uint64_t>(std::stoull(uuid_str.substr(24, 12), nullptr, 16))}
+      m_node{static_cast<uint8_t>(std::stoul(uuid_str.substr(24, 2), nullptr, 16)),
+             static_cast<uint8_t>(std::stoul(uuid_str.substr(26, 2), nullptr, 16)),
+             static_cast<uint8_t>(std::stoul(uuid_str.substr(28, 2), nullptr, 16)),
+             static_cast<uint8_t>(std::stoul(uuid_str.substr(30, 2), nullptr, 16)),
+             static_cast<uint8_t>(std::stoul(uuid_str.substr(32, 2), nullptr, 16)),
+             static_cast<uint8_t>(std::stoul(uuid_str.substr(34, 2), nullptr, 16))}
 {
 }
 
@@ -115,7 +121,9 @@ void UUID::v1_uuid() {
     m_clock_seq_hi_and_reserved |= 0x80;
 
     /* node */
-    m_node = s_mac_adr;
+    for (size_t i{0}; i<6; ++i) {
+        m_node[i] = s_mac_adr[i];
+    }
 }
 
 // TODO: implement UUID version 3
@@ -129,8 +137,9 @@ void UUID::v4_uuid() {
     randomize<uint16_t>(m_time_hi_and_version);
     randomize<uint8_t>(m_clock_seq_hi_and_reserved);
     randomize<uint8_t>(m_clock_seq_low);
-    randomize<uint64_t>(m_node);
-    m_node &= 0xFFFFFFFFFFFF;
+    for (size_t i{0}; i<6; ++i) {
+        randomize<uint8_t>(m_node[i]);
+    }
     // Set version and variant fields
     m_time_hi_and_version &= 0x4FFF;
     // FIXME: this is a hardcoded variant 1 (0b10x)
@@ -145,12 +154,17 @@ std::string UUID::str() const {
     std::ostringstream ss;
     ss << std::hex << std::setfill('0');
 
-    ss << std::setw(8 ) << m_time_low            << '-'  // time-low
-       << std::setw(4 ) << m_time_mid            << '-'  // time-mid
-       << std::setw(4 ) << m_time_hi_and_version << '-'  // time-high-and-version
-       << std::setw(2 ) << +m_clock_seq_hi_and_reserved  // clock-seq-and-reserved
-       << std::setw(2 ) << +m_clock_seq_low      << '-'  // clock-seq-low
-       << std::setw(12) << m_node;                       // node
+    ss << std::setw(8) << m_time_low            << '-'  // time-low
+       << std::setw(4) << m_time_mid            << '-'  // time-mid
+       << std::setw(4) << m_time_hi_and_version << '-'  // time-high-and-version
+       << std::setw(2) << +m_clock_seq_hi_and_reserved  // clock-seq-and-reserved
+       << std::setw(2) << +m_clock_seq_low      << '-'  // clock-seq-low
+       << std::setw(2) << +m_node[0]                    // node
+       << std::setw(2) << +m_node[1]
+       << std::setw(2) << +m_node[2]
+       << std::setw(2) << +m_node[3]
+       << std::setw(2) << +m_node[4]
+       << std::setw(2) << +m_node[5];
 
     return ss.str();
 }

@@ -39,14 +39,16 @@ template void randomize<uint8_t>(uint8_t&);      // clock-seq-and-reserved
 //template void randomize<uint8_t>(uint8_t&);    // clock-seq-low
 template void randomize<uint64_t>(uint64_t&);    // node
 
-uint64_t get_node() {
+uint8_t* get_node() {
     // TODO: find actual MAC Address of computer
     // TODO: give option to user to randomly create MAC Address (security concerns)
-    uint64_t node {0};
-    randomize<uint64_t>(node);
+    auto node = new uint8_t[6];
+    for (size_t i{0}; i<6; ++i) {
+        randomize<uint8_t>(node[i]);
+    }
     // Set the multicast bit (least-significant bit)
     //  since the MAC Address is pseudo-randomly created
-    node |= 1;
+    node[6] |= 1;
 
-    return node & 0xFFFFFFFFFFFF;  // get 48 LSB bits
+    return node;
 }
