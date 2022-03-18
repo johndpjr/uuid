@@ -76,10 +76,6 @@ unsigned int UUID::get_version() const {
     return m_time_hi_and_version >> 12;
 }
 
-unsigned int UUID::get_variant() const {
-//    return m_variant;
-}
-
 void UUID::v1_uuid() {
     /* time-low
      * time-mid

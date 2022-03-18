@@ -29,20 +29,6 @@ public:
         v4  = 4,
         v5  = 5
     };
-    /* The Variant affects the format and encoding of the UUID
-        From RFC 4122:
-            Msb0  Msb1  Msb2  Description
-            0     x     x     Reserved, NCS backward compatibility.
-            1     0     x     The variant specified in this document.
-            1     1     0     Reserved, Microsoft Corporation backward compatibility
-            1     1     1     Reserved for future definition.
-     */
-    enum Variant {
-        Apollo_NCS = 0,
-        RFC_4122   = 1,
-        Microsoft  = 2,
-        Future_Def = 3
-    };
 
 private:
     uint32_t m_time_low;                   // 32 bits
@@ -95,11 +81,6 @@ public:
      *  (Ex: returns 4 from Version 4 UUID)
      */
     [[nodiscard]] unsigned int get_version() const;
-    /**
-     * @return Variant number of the UUID
-     *  (Ex: returns 1 from Variant 1 UUID)
-     */
-    [[nodiscard]] unsigned int get_variant() const;
     /**
      * @return A hexadecimal string representation of the UUID
      *  (Ex: "123e4567-e89b-12d3-a456-426614174000")
