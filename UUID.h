@@ -16,11 +16,11 @@ class UUID
 {
 public:
     /* The Version affects how the UUID is generated
-           Version Nil: Special Nil UUID
-           Version 1  : Datetime and MAC Address
-           Version 3  : Namespace-based (MD5)
-           Version 4  : Random
-           Version 5  : Namespace-based (SHA-1)
+           Version 0 (Nil) : Special Nil UUID
+           Version 1 (v1)  : Datetime and MAC Address
+           Version 3 (v3)  : Namespace-based (MD5)
+           Version 4 (v4)  : Random
+           Version 5 (v5)  : Namespace-based (SHA-1)
      */
     enum Version {
         Nil = 0,
@@ -29,24 +29,6 @@ public:
         v4  = 4,
         v5  = 5
     };
-
-private:
-    uint32_t m_time_low;                   // 32 bits
-    uint16_t m_time_mid;                   // 16 bits
-    uint16_t m_time_hi_and_version;        // 16 bits
-    uint8_t  m_clock_seq_hi_and_reserved;  // 8 bits
-    uint8_t  m_clock_seq_low;              // 8 bits
-    uint8_t  m_node[6];                    // 48 bits
-
-    static uint64_t      s_last_uuid_time;
-    static unsigned int  s_uuids_this_tick;
-    static uint16_t      s_clock_seq;
-    static uint8_t*      s_mac_adr;
-
-    void v1_uuid();
-    void v3_uuid();
-    void v4_uuid();
-    void v5_uuid();
 
 public:
     /*
@@ -73,6 +55,25 @@ public:
      */
     UUID(const std::string& uuid_str);
 
+private:
+    uint32_t m_time_low;                   // 32 bits
+    uint16_t m_time_mid;                   // 16 bits
+    uint16_t m_time_hi_and_version;        // 16 bits
+    uint8_t  m_clock_seq_hi_and_reserved;  // 8 bits
+    uint8_t  m_clock_seq_low;              // 8 bits
+    uint8_t  m_node[6];                    // 48 bits
+
+    static uint64_t      s_last_uuid_time;
+    static unsigned int  s_uuids_this_tick;
+    static uint16_t      s_clock_seq;
+    static uint8_t*      s_mac_adr;
+
+    void v1_uuid();
+    void v3_uuid();
+    void v4_uuid();
+    void v5_uuid();
+
+public:
     /*
      * Functions
      */
