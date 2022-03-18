@@ -14,7 +14,7 @@ uint64_t get_uuid_ticks() {
 
 uint16_t get_clock_seq() {
     uint16_t clock_seq {0};
-    randomize<uint16_t>(clock_seq);
+    randomize(clock_seq);
     return clock_seq;
 }
 
@@ -37,14 +37,14 @@ template void randomize<uint16_t>(uint16_t&);    // time-mid
 //template void randomize<uint16_t>(uint16_t&);  // time-high-and-version
 template void randomize<uint8_t>(uint8_t&);      // clock-seq-and-reserved
 //template void randomize<uint8_t>(uint8_t&);    // clock-seq-low
-template void randomize<uint64_t>(uint64_t&);    // node
+//template void randomize<uint8_t>(uint8_t&);    // node
 
 uint8_t* get_node() {
     // TODO: find actual MAC Address of computer
     // TODO: give option to user to randomly create MAC Address (security concerns)
     auto node = new uint8_t[6];
     for (size_t i{0}; i<6; ++i) {
-        randomize<uint8_t>(node[i]);
+        randomize(node[i]);
     }
     // Set the multicast bit (least-significant bit)
     //  since the MAC Address is pseudo-randomly created
