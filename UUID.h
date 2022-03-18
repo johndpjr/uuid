@@ -45,9 +45,6 @@ public:
     };
 
 private:
-    Version m_version;
-    Variant m_variant;
-
     uint32_t m_time_low;                   // 32 bits
     uint16_t m_time_mid;                   // 16 bits
     uint16_t m_time_hi_and_version;        // 16 bits

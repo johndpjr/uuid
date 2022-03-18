@@ -9,8 +9,7 @@ uint8_t* UUID::s_mac_adr              {get_node()};
  * Constructors
  */
 UUID::UUID()
-    : m_version{Version::Nil},
-      m_time_low{0},
+    : m_time_low{0},
       m_time_mid{0},
       m_time_hi_and_version{0},
       m_clock_seq_hi_and_reserved{0},
@@ -20,7 +19,6 @@ UUID::UUID()
 }
 
 UUID::UUID(const Version& ver)
-    : m_version{ver}
 {
     switch(ver) {
         case Version::Nil:
@@ -47,8 +45,7 @@ UUID::UUID(const Version& ver)
 }
 
 UUID::UUID(const UUID &u)
-    : m_version{u.m_version}, m_variant{u.m_variant},
-      m_time_low{u.m_time_low}, m_time_mid{u.m_time_mid},
+    : m_time_low{u.m_time_low}, m_time_mid{u.m_time_mid},
       m_time_hi_and_version{u.m_time_hi_and_version},
       m_clock_seq_hi_and_reserved{u.m_clock_seq_hi_and_reserved},
       m_clock_seq_low{u.m_clock_seq_low},
@@ -76,11 +73,11 @@ UUID::UUID(const std::string& uuid_str)
  * Functions
  */
 unsigned int UUID::get_version() const {
-    return m_version;
+    return m_time_hi_and_version >> 12;
 }
 
 unsigned int UUID::get_variant() const {
-    return m_variant;
+//    return m_variant;
 }
 
 void UUID::v1_uuid() {
