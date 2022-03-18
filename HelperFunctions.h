@@ -1,9 +1,10 @@
 #ifndef UUID__HELPERFUNCTIONS_H
 #define UUID__HELPERFUNCTIONS_H
 
-#include <string>
+#include <bitset>
 #include <chrono>
 #include <random>
+#include <string>
 
 #include "constants.h"
 
@@ -20,5 +21,8 @@ void randomize(T& num);
 // Returns the MAC Address of the computer
 // Currently just pseudo-randomly generates a MAC Address
 uint8_t* get_node();
+
+// Computes the MD5 hash of a message
+std::bitset<128> MD5(const std::string& msg);
 
 #endif //UUID__HELPERFUNCTIONS_H
