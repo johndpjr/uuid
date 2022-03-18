@@ -10,6 +10,7 @@
 #include "constants.h"
 
 using namespace constants;
+using std::setw;
 
 class UUID
 {
