@@ -10,7 +10,7 @@ namespace constants {
 
     /* MD5 Algorithm */
     namespace md5 {
-        const unsigned int PER_ROUND_SHIFTS[64] {
+        const unsigned int SHIFTS[64] {
                 7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
                 5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
                 4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,

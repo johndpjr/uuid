@@ -1,13 +1,13 @@
 #ifndef UUID_EXEC__UUID_H
 #define UUID_EXEC__UUID_H
 
-#include <string>
-#include <sstream>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 
-#include "HelperFunctions.h"
 #include "constants.h"
+#include "HelperFunctions.h"
 
 using namespace constants;
 using std::setw;
