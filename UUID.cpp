@@ -91,8 +91,7 @@ void UUID::v1_uuid() {
                 uuid_time = get_uuid_ticks();
             }
         }
-    }
-    else {
+    } else {
         s_uuids_this_tick = 0;
     }
 
@@ -124,7 +123,7 @@ void UUID::v3_uuid() {
 }
 
 void UUID::v4_uuid() {
-    // Set all bits to pseudo-randomly created values
+    // Randomize all bits
     randomize(m_time_low);
     randomize(m_time_mid);
     randomize(m_time_hi_and_version);
@@ -134,7 +133,8 @@ void UUID::v4_uuid() {
         randomize(m_node[i]);
     }
     // Set version and variant fields
-    m_time_hi_and_version &= 0x4FFF;
+    m_time_hi_and_version &= 0xFFF;
+    m_time_hi_and_version |= 0x4000;
     // FIXME: this is a hardcoded variant 1 (0b10x)
     m_clock_seq_hi_and_reserved &= 0xBF;
 }
