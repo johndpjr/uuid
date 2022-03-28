@@ -18,7 +18,7 @@ UUID::UUID()
 {
 }
 
-UUID::UUID(const Version& ver)
+UUID::UUID(Version ver)
 {
     switch(ver) {
         case Version::Nil:

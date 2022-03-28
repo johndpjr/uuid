@@ -43,7 +43,7 @@ public:
      * Version constructor
      * @param ver
      */
-    UUID(const Version& ver);
+    explicit UUID(Version ver);
     /**
      * Copy constructor copies uuid
      * @param uuid
