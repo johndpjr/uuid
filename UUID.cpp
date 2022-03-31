@@ -81,7 +81,6 @@ void UUID::v1_uuid() {
      * time-mid
      * time-hi-and-version */
     uint64_t uuid_time {get_uuid_ticks()};
-    ++s_uuids_this_tick;
     // If the system clock hasn't ticked ( >1 UUID requested in 1 microsecond),
     //  increment the timestamp to simulate a 100ns tick passing
     if (uuid_time == s_last_uuid_time) {
@@ -116,6 +115,8 @@ void UUID::v1_uuid() {
     for (size_t i{0}; i<6; ++i) {
         m_node[i] = s_mac_adr[i];
     }
+
+    ++s_uuids_this_tick;
 }
 
 // TODO: implement UUID version 3
