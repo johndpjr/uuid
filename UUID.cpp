@@ -83,7 +83,7 @@ void UUID::v1_uuid() {
     uint64_t uuid_time {get_uuid_ticks()};
     // If the system clock hasn't ticked ( >1 UUID requested in 1 microsecond),
     //  increment the timestamp to simulate a 100ns tick passing
-    if (s_uuids_this_tick > MAX_UUIDS_PER_TICK) {
+    if (s_uuids_this_tick >= MAX_UUIDS_PER_TICK) {
         while (uuid_time == s_last_uuid_time) {
             uuid_time = get_uuid_ticks();
         }
