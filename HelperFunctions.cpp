@@ -39,6 +39,10 @@ template void randomize<uint8_t>(uint8_t&);      // clock-seq-and-reserved
 //template void randomize<uint8_t>(uint8_t&);    // clock-seq-low
 //template void randomize<uint8_t>(uint8_t&);    // node
 
+uint32_t xorshift128(xorshift128_state *state) {
+
+}
+
 uint8_t* get_node() {
     // TODO: find actual MAC Address of computer
     // TODO: give option to user to randomly create MAC Address (security concerns)
