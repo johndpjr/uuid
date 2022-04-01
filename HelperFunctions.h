@@ -18,12 +18,6 @@ uint16_t get_clock_seq();
 template <typename T>
 void randomize(T& num);
 
-struct xorshift128_state {
-    uint32_t x[4];
-};
-
-uint32_t xorshift128(xorshift128_state *state);
-
 // Returns the MAC Address of the computer
 // Currently just pseudo-randomly generates a MAC Address
 uint8_t* get_node();
