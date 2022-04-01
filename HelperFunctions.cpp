@@ -52,6 +52,3 @@ uint8_t* get_node() {
 
     return node;
 }
-
-std::bitset<128> MD5(const std::string& msg) {
-}
