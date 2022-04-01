@@ -10,7 +10,6 @@
 #include "HelperFunctions.h"
 
 using namespace constants;
-using std::setw;
 
 class UUID
 {

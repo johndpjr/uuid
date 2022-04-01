@@ -145,17 +145,17 @@ std::string UUID::str() const {
     std::ostringstream ss;
     ss << std::hex << std::setfill('0');
 
-    ss << setw(8) << m_time_low            << '-'  // time-low
-       << setw(4) << m_time_mid            << '-'  // time-mid
-       << setw(4) << m_time_hi_and_version << '-'  // time-high-and-version
-       << setw(2) << +m_clock_seq_hi_and_reserved  // clock-seq-and-reserved
-       << setw(2) << +m_clock_seq_low      << '-'  // clock-seq-low
-       << setw(2) << +m_node[0]                    // node
-       << setw(2) << +m_node[1]
-       << setw(2) << +m_node[2]
-       << setw(2) << +m_node[3]
-       << setw(2) << +m_node[4]
-       << setw(2) << +m_node[5];
+    ss << std::setw(8) << m_time_low            << '-'  // time-low
+       << std::setw(4) << m_time_mid            << '-'  // time-mid
+       << std::setw(4) << m_time_hi_and_version << '-'  // time-high-and-version
+       << std::setw(2) << +m_clock_seq_hi_and_reserved  // clock-seq-and-reserved
+       << std::setw(2) << +m_clock_seq_low      << '-'  // clock-seq-low
+       << std::setw(2) << +m_node[0]                    // node
+       << std::setw(2) << +m_node[1]
+       << std::setw(2) << +m_node[2]
+       << std::setw(2) << +m_node[3]
+       << std::setw(2) << +m_node[4]
+       << std::setw(2) << +m_node[5];
 
     return ss.str();
 }
