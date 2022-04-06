@@ -5,6 +5,11 @@ unsigned int UUID::s_uuids_this_tick  {0};
 uint16_t UUID::s_clock_seq            {get_clock_seq()};
 uint8_t* UUID::s_mac_adr              {get_node()};
 
+UUID const UUID::NSID_DNS   {"6ba7b810-9dad-11d1-80b4-00c04fd430c8"};
+UUID const UUID::NSID_URL   {"6ba7b811-9dad-11d1-80b4-00c04fd430c8"};
+UUID const UUID::NSID_OID   {"6ba7b812-9dad-11d1-80b4-00c04fd430c8"};
+UUID const UUID::NSID_X500  {"6ba7b814-9dad-11d1-80b4-00c04fd430c8"};
+
 /*
  * Constructors
  */
@@ -33,14 +38,26 @@ UUID::UUID(Version ver)
             v1_uuid();
             break;
         case Version::v3:
-            v3_uuid();
             break;
         case Version::v4:
             v4_uuid();
             break;
         case Version::v5:
-            v5_uuid();
             break;
+    }
+}
+
+UUID::UUID(Version ver, const std::string& name_space, const std::string& name)
+{
+    switch (ver) {
+        case Version::Nil:
+        case Version::v1:
+        case Version::v4:
+            break;
+        case Version::v3:
+            v3_uuid(name_space, name);
+        case Version::v5:
+            v5_uuid(name_space, name);
     }
 }
 
@@ -54,6 +71,7 @@ UUID::UUID(const UUID &u)
 {
 }
 
+// FIXME: use regex to confirm that the uuid string is valid
 UUID::UUID(const std::string& uuid_str)
     : m_time_low{static_cast<uint32_t>(std::stoul(uuid_str.substr(0, 8), nullptr, 16))},
       m_time_mid{static_cast<uint16_t>(std::stoul(uuid_str.substr(9, 4), nullptr, 16))},
@@ -117,7 +135,7 @@ void UUID::v1_uuid() {
 }
 
 // TODO: implement UUID version 3
-void UUID::v3_uuid() {
+void UUID::v3_uuid(const UUID &nsid, const std::string& name) {
 }
 
 void UUID::v4_uuid() {
@@ -138,7 +156,7 @@ void UUID::v4_uuid() {
 }
 
 // TODO: implement UUID version 5
-void UUID::v5_uuid() {
+void UUID::v5_uuid(const UUID &nsid, const std::string& name) {
 }
 
 std::string UUID::str() const {

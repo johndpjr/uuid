@@ -1,6 +1,7 @@
 #ifndef UUID_EXEC__UUID_H
 #define UUID_EXEC__UUID_H
 
+#include <hashlib++/hl_md5.h>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -43,6 +44,7 @@ public:
      * @param ver
      */
     explicit UUID(Version ver);
+    explicit UUID(Version ver, const std::string& name_space, const std::string& name);
     /**
      * Copy constructor copies uuid
      * @param uuid
@@ -53,6 +55,12 @@ public:
      * @param uuid_str
      */
     UUID(const std::string& uuid_str);
+
+    // Common namespace IDs for v3 and v5 generation
+    static const UUID NSID_DNS;
+    static const UUID NSID_URL;
+    static const UUID NSID_OID;
+    static const UUID NSID_X500;
 
 private:
     uint32_t m_time_low;                   // 32 bits
@@ -68,9 +76,9 @@ private:
     static uint8_t*      s_mac_adr;
 
     void v1_uuid();
-    void v3_uuid();
+    void v3_uuid(const UUID &nsid, const std::string& name);
     void v4_uuid();
-    void v5_uuid();
+    void v5_uuid(const UUID &nsid, const std::string& name);
 
 public:
     /*
