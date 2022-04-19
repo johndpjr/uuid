@@ -85,6 +85,10 @@ public:
      * Functions
      */
     /**
+     * @return Pointer to data of UUID
+     */
+    [[nodiscard]] unsigned char* get_data() const;
+    /**
      * @return Version number of the UUID
      *  (Ex: returns 4 from Version 4 UUID)
      */
@@ -103,6 +107,7 @@ public:
     /*
      * Operator Overloading
      */
+    UUID& operator=(const UUID& u);
     friend std::ostream& operator<<(std::ostream& os, const UUID& u);
     friend std::istream& operator>>(std::istream& is, UUID& u);
     friend bool operator==(const UUID& lhs, const UUID& rhs);

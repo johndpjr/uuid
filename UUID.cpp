@@ -90,6 +90,11 @@ UUID::UUID(const std::string& uuid_str)
 /*
  * Functions
  */
+unsigned char* UUID::get_data() const {
+    auto data = new unsigned char[16];
+    return data;
+}
+
 unsigned int UUID::get_version() const {
     return m_time_hi_and_version >> 12;
 }
@@ -136,6 +141,10 @@ void UUID::v1_uuid() {
 
 // TODO: implement UUID version 3
 void UUID::v3_uuid(const UUID &nsid, const std::string& name) {
+    HL_MD5_CTX ctx;
+    MD5 md5;
+    md5.MD5Init(&ctx);
+//    md5.MD5Update(&ctx, &nsid, sizeof nsid);
 }
 
 void UUID::v4_uuid() {
@@ -185,6 +194,18 @@ std::string UUID::urn_str() const {
 /*
  * Operator Overloading
  */
+UUID& UUID::operator=(const UUID& u) {
+    m_time_low = u.m_time_low;
+    m_time_mid = u.m_time_mid;
+    m_time_hi_and_version = u.m_time_hi_and_version;
+    m_clock_seq_hi_and_reserved = u.m_clock_seq_hi_and_reserved;
+    m_clock_seq_low = u.m_clock_seq_low;
+    for (size_t i{0}; i < 6; ++i) {
+        m_node[i] = u.m_node[i];
+    }
+    return *this;
+}
+
 std::ostream& operator<<(std::ostream& os, const UUID& u) {
     os << u.str();
     return os;
