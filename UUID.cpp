@@ -5,10 +5,10 @@ unsigned int UUID::s_uuids_this_tick  {0};
 uint16_t UUID::s_clock_seq            {get_clock_seq()};
 uint8_t* UUID::s_mac_adr              {get_node()};
 
-UUID const UUID::NSID_DNS   {"6ba7b810-9dad-11d1-80b4-00c04fd430c8"};
-UUID const UUID::NSID_URL   {"6ba7b811-9dad-11d1-80b4-00c04fd430c8"};
-UUID const UUID::NSID_OID   {"6ba7b812-9dad-11d1-80b4-00c04fd430c8"};
-UUID const UUID::NSID_X500  {"6ba7b814-9dad-11d1-80b4-00c04fd430c8"};
+UUID::uuid_t const UUID::NSID_DNS   {0x6ba7b810, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
+UUID::uuid_t const UUID::NSID_URL   {0x6ba7b811, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
+UUID::uuid_t const UUID::NSID_OID   {0x6ba7b812, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
+UUID::uuid_t const UUID::NSID_X500  {0x6ba7b814, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
 
 /*
  * Constructors
@@ -47,7 +47,7 @@ UUID::UUID(Version ver)
     }
 }
 
-UUID::UUID(Version ver, const std::string& name_space, const std::string& name)
+UUID::UUID(Version ver, uuid_t nsid, std::string name)
 {
     switch (ver) {
         case Version::Nil:
@@ -55,9 +55,9 @@ UUID::UUID(Version ver, const std::string& name_space, const std::string& name)
         case Version::v4:
             break;
         case Version::v3:
-            v3_uuid(name_space, name);
+            v3_uuid(nsid, name);
         case Version::v5:
-            v5_uuid(name_space, name);
+            v5_uuid(nsid, name);
     }
 }
 
@@ -90,11 +90,6 @@ UUID::UUID(const std::string& uuid_str)
 /*
  * Functions
  */
-unsigned char* UUID::get_data() const {
-    auto data = new unsigned char[16];
-    return data;
-}
-
 unsigned int UUID::get_version() const {
     return m_time_hi_and_version >> 12;
 }
@@ -140,11 +135,18 @@ void UUID::v1_uuid() {
 }
 
 // TODO: implement UUID version 3
-void UUID::v3_uuid(const UUID &nsid, const std::string& name) {
+void UUID::v3_uuid(uuid_t nsid, std::string name) {
+    unsigned char hash[16];
     HL_MD5_CTX ctx;
     MD5 md5;
+    m_time_low = htonl(m_time_low);
+    m_time_mid = htons(m_time_mid);
+    m_time_hi_and_version = htons(m_time_hi_and_version);
     md5.MD5Init(&ctx);
-//    md5.MD5Update(&ctx, &nsid, sizeof nsid);
+    md5.MD5Update(&ctx, reinterpret_cast<unsigned char *>(&nsid), sizeof nsid);
+    md5.MD5Update(&ctx, reinterpret_cast<unsigned char *>(&name[0]), name.size());
+    md5.MD5Final(hash, &ctx);
+    format_v3_or_v5(hash, 3);
 }
 
 void UUID::v4_uuid() {
@@ -165,7 +167,23 @@ void UUID::v4_uuid() {
 }
 
 // TODO: implement UUID version 5
-void UUID::v5_uuid(const UUID &nsid, const std::string& name) {
+void UUID::v5_uuid(uuid_t nsid, std::string name) {
+}
+
+void UUID::format_v3_or_v5(unsigned char* hash, int version) {
+    // Copy hash contents to uuid
+    std::memcpy(&m_time_low, &hash[0], 4);                   // time-low
+    std::memcpy(&m_time_mid, &hash[4], 2);                   // time-mid
+    std::memcpy(&m_time_hi_and_version, &hash[6], 2);        // time-high-and-version
+    std::memcpy(&m_clock_seq_hi_and_reserved, &hash[8], 1);  // clock-seq-hi-and-reserved
+    std::memcpy(&m_clock_seq_low, &hash[9], 1);              // clock-seq-low
+    std::memcpy(m_node, &hash[10], 6);                       // node
+
+    // Encode version and variant
+    m_time_hi_and_version &= 0x0FFF;
+    m_time_hi_and_version |= (version << 12);
+    // FIXME: this is a hardcoded variant 1 (0b10x)
+    m_clock_seq_hi_and_reserved &= 0xBF;
 }
 
 std::string UUID::str() const {
@@ -175,7 +193,7 @@ std::string UUID::str() const {
     ss << std::setw(8) << m_time_low            << '-'  // time-low
        << std::setw(4) << m_time_mid            << '-'  // time-mid
        << std::setw(4) << m_time_hi_and_version << '-'  // time-high-and-version
-       << std::setw(2) << +m_clock_seq_hi_and_reserved  // clock-seq-and-reserved
+       << std::setw(2) << +m_clock_seq_hi_and_reserved  // clock-seq-hi-and-reserved
        << std::setw(2) << +m_clock_seq_low      << '-'  // clock-seq-low
        << std::setw(2) << +m_node[0]                    // node
        << std::setw(2) << +m_node[1]
