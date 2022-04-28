@@ -74,12 +74,12 @@ public:
     static const uuid_t NSID_X500;
 
 private:
-    uint32_t m_time_low;                   // 32 bits
-    uint16_t m_time_mid;                   // 16 bits
-    uint16_t m_time_hi_and_version;        // 16 bits
-    uint8_t  m_clock_seq_hi_and_reserved;  // 8 bits
-    uint8_t  m_clock_seq_low;              // 8 bits
-    uint8_t  m_node[6];                    // 48 bits
+    uint32_t  m_time_low;                   // 32 bits
+    uint16_t  m_time_mid;                   // 16 bits
+    uint16_t  m_time_hi_and_version;        // 16 bits
+    uint8_t   m_clock_seq_hi_and_reserved;  // 8 bits
+    uint8_t   m_clock_seq_low;              // 8 bits
+    uint8_t   m_node[6];                    // 48 bits
 
     static uint64_t      s_last_uuid_time;
     static unsigned int  s_uuids_this_tick;

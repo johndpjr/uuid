@@ -5,34 +5,45 @@ unsigned int UUID::s_uuids_this_tick  {0};
 uint16_t UUID::s_clock_seq            {get_clock_seq()};
 uint8_t* UUID::s_mac_adr              {get_node()};
 
-UUID::uuid_t const UUID::NSID_DNS   {0x6ba7b810, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
-UUID::uuid_t const UUID::NSID_URL   {0x6ba7b811, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
-UUID::uuid_t const UUID::NSID_OID   {0x6ba7b812, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
-UUID::uuid_t const UUID::NSID_X500  {0x6ba7b814, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8};
+UUID::uuid_t const UUID::NSID_DNS { // "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+    0x6ba7b810, 0x9dad, 0x11d1,
+    0x80, 0xb4,
+    0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
+};
+
+UUID::uuid_t const UUID::NSID_URL  { // 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+    0x6ba7b811, 0x9dad, 0x11d1,
+    0x80, 0xb4,
+    0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
+};
+
+UUID::uuid_t const UUID::NSID_OID  { // 6ba7b812-9dad-11d1-80b4-00c04fd430c8
+    0x6ba7b812, 0x9dad, 0x11d1,
+    0x80, 0xb4,
+    0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
+};
+
+UUID::uuid_t const UUID::NSID_X500 {  // 6ba7b814-9dad-11d1-80b4-00c04fd430c8
+    0x6ba7b814, 0x9dad, 0x11d1,
+    0x80, 0xb4,
+    0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
+};
 
 /*
  * Constructors
  */
 UUID::UUID()
-    : m_time_low{0},
-      m_time_mid{0},
-      m_time_hi_and_version{0},
-      m_clock_seq_hi_and_reserved{0},
-      m_clock_seq_low{0},
-      m_node{0}
+    : m_time_low{0}, m_time_mid{0}, m_time_hi_and_version{0},
+      m_clock_seq_hi_and_reserved{0}, m_clock_seq_low{0},
+      m_node{0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 {
 }
 
 UUID::UUID(Version ver)
+    : UUID()
 {
     switch(ver) {
         case Version::Nil:
-            m_time_low                  = 0;
-            m_time_mid                  = 0;
-            m_time_hi_and_version       = 0;
-            m_clock_seq_hi_and_reserved = 0;
-            m_clock_seq_low             = 0;
-            m_node[0]=0; m_node[1]=0; m_node[2]=0; m_node[3]=0; m_node[4]=0; m_node[5]=0;
             break;
         case Version::v1:
             v1_uuid();
@@ -48,6 +59,7 @@ UUID::UUID(Version ver)
 }
 
 UUID::UUID(Version ver, uuid_t nsid, std::string name)
+    : UUID()
 {
     switch (ver) {
         case Version::Nil:
@@ -62,10 +74,8 @@ UUID::UUID(Version ver, uuid_t nsid, std::string name)
 }
 
 UUID::UUID(const UUID &u)
-    : m_time_low{u.m_time_low}, m_time_mid{u.m_time_mid},
-      m_time_hi_and_version{u.m_time_hi_and_version},
-      m_clock_seq_hi_and_reserved{u.m_clock_seq_hi_and_reserved},
-      m_clock_seq_low{u.m_clock_seq_low},
+    : m_time_low{u.m_time_low}, m_time_mid{u.m_time_mid}, m_time_hi_and_version{u.m_time_hi_and_version},
+      m_clock_seq_hi_and_reserved{u.m_clock_seq_hi_and_reserved}, m_clock_seq_low{u.m_clock_seq_low},
       m_node{u.m_node[0], u.m_node[1], u.m_node[2],
              u.m_node[3], u.m_node[4], u.m_node[5]}
 {
@@ -90,10 +100,6 @@ UUID::UUID(const std::string& uuid_str)
 /*
  * Functions
  */
-unsigned int UUID::get_version() const {
-    return m_time_hi_and_version >> 12;
-}
-
 void UUID::v1_uuid() {
     /* time-low
      * time-mid
@@ -134,14 +140,15 @@ void UUID::v1_uuid() {
     ++s_uuids_this_tick;
 }
 
-// TODO: implement UUID version 3
 void UUID::v3_uuid(uuid_t nsid, std::string name) {
     unsigned char hash[16];
     HL_MD5_CTX ctx;
     MD5 md5;
-    m_time_low = htonl(m_time_low);
-    m_time_mid = htons(m_time_mid);
-    m_time_hi_and_version = htons(m_time_hi_and_version);
+
+    nsid.time_low = htonl(nsid.time_low);
+    nsid.time_mid = htons(nsid.time_mid);
+    nsid.time_hi_and_version = htons(nsid.time_hi_and_version);
+
     md5.MD5Init(&ctx);
     md5.MD5Update(&ctx, reinterpret_cast<unsigned char *>(&nsid), sizeof nsid);
     md5.MD5Update(&ctx, reinterpret_cast<unsigned char *>(&name[0]), name.size());
@@ -173,8 +180,11 @@ void UUID::v5_uuid(uuid_t nsid, std::string name) {
 void UUID::format_v3_or_v5(unsigned char* hash, int version) {
     // Copy hash contents to uuid
     std::memcpy(&m_time_low, &hash[0], 4);                   // time-low
+    m_time_low = htonl(m_time_low);
     std::memcpy(&m_time_mid, &hash[4], 2);                   // time-mid
+    m_time_mid = htons(m_time_mid);
     std::memcpy(&m_time_hi_and_version, &hash[6], 2);        // time-high-and-version
+    m_time_hi_and_version = htons(m_time_hi_and_version);
     std::memcpy(&m_clock_seq_hi_and_reserved, &hash[8], 1);  // clock-seq-hi-and-reserved
     std::memcpy(&m_clock_seq_low, &hash[9], 1);              // clock-seq-low
     std::memcpy(m_node, &hash[10], 6);                       // node
@@ -184,6 +194,10 @@ void UUID::format_v3_or_v5(unsigned char* hash, int version) {
     m_time_hi_and_version |= (version << 12);
     // FIXME: this is a hardcoded variant 1 (0b10x)
     m_clock_seq_hi_and_reserved &= 0xBF;
+}
+
+unsigned int UUID::get_version() const {
+    return m_time_hi_and_version >> 12;
 }
 
 std::string UUID::str() const {
