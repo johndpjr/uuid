@@ -1,5 +1,5 @@
-#ifndef UUID_EXEC__UUID_H
-#define UUID_EXEC__UUID_H
+#ifndef UUID_UUID_H
+#define UUID_UUID_H
 
 #include <cstring>
 #include <hashlib++/hl_md5.h>
@@ -17,7 +17,7 @@ using namespace constants;
 class UUID
 {
 public:
-    /* The Version affects how the UUID is generated
+    /** The Version affects how the UUID is generated
            Version 0 (Nil) : Special Nil UUID
            Version 1 (v1)  : Datetime and MAC Address
            Version 3 (v3)  : Namespace-based (MD5)
@@ -42,9 +42,6 @@ public:
     } uuid_t;
 
 public:
-    /*
-     * Constructors
-     */
     /**
      * No-args constructor creates a Nil Version UUID
      *  where all 128 bits are set to 0 (00000000-0000-0000-0000-000000000000)
@@ -94,9 +91,6 @@ private:
     void format_v3_or_v5(unsigned char* hash, int version);
 
 public:
-    /*
-     * Functions
-     */
     /**
      * @return Version number of the UUID
      *  (Ex: returns 4 from Version 4 UUID)
@@ -113,9 +107,6 @@ public:
      */
     [[nodiscard]] std::string urn_str() const;
 
-    /*
-     * Operator Overloading
-     */
     UUID& operator=(const UUID& u);
     friend std::ostream& operator<<(std::ostream& os, const UUID& u);
     friend std::istream& operator>>(std::istream& is, UUID& u);
@@ -128,4 +119,4 @@ public:
 };
 
 
-#endif //UUID_EXEC__UUID_H
+#endif //UUID_UUID_H
