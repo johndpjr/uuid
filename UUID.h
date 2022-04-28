@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <hashlib++/hl_md5.h>
+#include <hashlib++/hl_sha1.h>
 #include <iomanip>
 #include <iostream>
 #include <netinet/in.h>

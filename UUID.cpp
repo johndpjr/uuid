@@ -68,8 +68,10 @@ UUID::UUID(Version ver, uuid_t nsid, std::string name)
             break;
         case Version::v3:
             v3_uuid(nsid, name);
+            break;
         case Version::v5:
             v5_uuid(nsid, name);
+            break;
     }
 }
 
@@ -170,21 +172,35 @@ void UUID::v4_uuid() {
     m_time_hi_and_version &= 0xFFF;
     m_time_hi_and_version |= 0x4000;
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    m_clock_seq_hi_and_reserved &= 0xBF;
+    m_clock_seq_hi_and_reserved &= 0x3F;
+    m_clock_seq_hi_and_reserved |= 0x80;
 }
 
-// TODO: implement UUID version 5
 void UUID::v5_uuid(uuid_t nsid, std::string name) {
+    // SHA-1 hashes to 160 bits, but hash will later be truncated to fit 128 bit uuid size
+    unsigned char hash[20];
+    HL_SHA1_CTX ctx;
+    SHA1 sha1;
+
+    nsid.time_low = htonl(nsid.time_low);
+    nsid.time_mid = htons(nsid.time_mid);
+    nsid.time_hi_and_version = htons(nsid.time_hi_and_version);
+
+    sha1.SHA1Reset(&ctx);
+    sha1.SHA1Input(&ctx, reinterpret_cast<unsigned char *>(&nsid), sizeof nsid);
+    sha1.SHA1Input(&ctx, reinterpret_cast<unsigned char *>(&name[0]), name.size());
+    sha1.SHA1Result(&ctx, hash);
+    format_v3_or_v5(hash, 5);
 }
 
 void UUID::format_v3_or_v5(unsigned char* hash, int version) {
     // Copy hash contents to uuid
     std::memcpy(&m_time_low, &hash[0], 4);                   // time-low
-    m_time_low = htonl(m_time_low);
+    m_time_low = ntohl(m_time_low);
     std::memcpy(&m_time_mid, &hash[4], 2);                   // time-mid
-    m_time_mid = htons(m_time_mid);
+    m_time_mid = ntohs(m_time_mid);
     std::memcpy(&m_time_hi_and_version, &hash[6], 2);        // time-high-and-version
-    m_time_hi_and_version = htons(m_time_hi_and_version);
+    m_time_hi_and_version = ntohs(m_time_hi_and_version);
     std::memcpy(&m_clock_seq_hi_and_reserved, &hash[8], 1);  // clock-seq-hi-and-reserved
     std::memcpy(&m_clock_seq_low, &hash[9], 1);              // clock-seq-low
     std::memcpy(m_node, &hash[10], 6);                       // node
@@ -193,7 +209,8 @@ void UUID::format_v3_or_v5(unsigned char* hash, int version) {
     m_time_hi_and_version &= 0x0FFF;
     m_time_hi_and_version |= (version << 12);
     // FIXME: this is a hardcoded variant 1 (0b10x)
-    m_clock_seq_hi_and_reserved &= 0xBF;
+    m_clock_seq_hi_and_reserved &= 0x3F;
+    m_clock_seq_hi_and_reserved |= 0x80;
 }
 
 unsigned int UUID::get_version() const {
