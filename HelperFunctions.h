@@ -1,5 +1,5 @@
-#ifndef UUID__HELPERFUNCTIONS_H
-#define UUID__HELPERFUNCTIONS_H
+#ifndef UUID_HELPERFUNCTIONS_H
+#define UUID_HELPERFUNCTIONS_H
 
 #include <chrono>
 #include <random>
@@ -21,4 +21,4 @@ void randomize(T& num);
 // Currently just pseudo-randomly generates a MAC Address
 uint8_t* get_node();
 
-#endif //UUID__HELPERFUNCTIONS_H
+#endif //UUID_HELPERFUNCTIONS_H

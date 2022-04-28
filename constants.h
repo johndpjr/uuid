@@ -1,5 +1,5 @@
-#ifndef UUID__CONSTANTS_H
-#define UUID__CONSTANTS_H
+#ifndef UUID_CONSTANTS_H
+#define UUID_CONSTANTS_H
 
 namespace constants {
     // Number of 100ns ticks between October 15, 1582 and January 1, 1970
@@ -8,4 +8,4 @@ namespace constants {
     //  given the same timestamp (and microsecond clock granularity)
     const unsigned long MAX_UUIDS_PER_TICK {10};
 }
-#endif //UUID__CONSTANTS_H
+#endif //UUID_CONSTANTS_H
