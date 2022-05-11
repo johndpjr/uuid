@@ -5,25 +5,25 @@ unsigned int UUID::s_uuids_this_tick  {0};
 uint16_t UUID::s_clock_seq            {get_clock_seq()};
 uint8_t* UUID::s_mac_adr              {get_node()};
 
-UUID::uuid_t const UUID::NSID_DNS { // "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+UUID const UUID::NSID_DNS { // "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
     0x6ba7b810, 0x9dad, 0x11d1,
     0x80, 0xb4,
     0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
 };
 
-UUID::uuid_t const UUID::NSID_URL  { // 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+UUID const UUID::NSID_URL  { // 6ba7b811-9dad-11d1-80b4-00c04fd430c8
     0x6ba7b811, 0x9dad, 0x11d1,
     0x80, 0xb4,
     0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
 };
 
-UUID::uuid_t const UUID::NSID_OID  { // 6ba7b812-9dad-11d1-80b4-00c04fd430c8
+UUID const UUID::NSID_OID  { // 6ba7b812-9dad-11d1-80b4-00c04fd430c8
     0x6ba7b812, 0x9dad, 0x11d1,
     0x80, 0xb4,
     0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
 };
 
-UUID::uuid_t const UUID::NSID_X500 {  // 6ba7b814-9dad-11d1-80b4-00c04fd430c8
+UUID const UUID::NSID_X500 {  // 6ba7b814-9dad-11d1-80b4-00c04fd430c8
     0x6ba7b814, 0x9dad, 0x11d1,
     0x80, 0xb4,
     0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
@@ -58,7 +58,7 @@ UUID::UUID(Version ver)
     }
 }
 
-UUID::UUID(Version ver, uuid_t nsid, std::string name)
+UUID::UUID(Version ver, UUID nsid, std::string name)
     : UUID()
 {
     switch (ver) {
@@ -73,6 +73,15 @@ UUID::UUID(Version ver, uuid_t nsid, std::string name)
             v5_uuid(nsid, name);
             break;
     }
+}
+
+UUID::UUID(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version,
+           uint8_t clock_seq_hi_and_reserved, uint8_t clock_seq_low,
+           uint8_t node_0, uint8_t node_1, uint8_t node_2, uint8_t node_3, uint8_t node_4, uint8_t node_5)
+    : m_time_low{time_low}, m_time_mid{time_mid}, m_time_hi_and_version{time_hi_and_version},
+      m_clock_seq_hi_and_reserved{clock_seq_hi_and_reserved}, m_clock_seq_low{clock_seq_low},
+      m_node{node_0, node_1, node_2, node_3, node_4, node_5}
+{
 }
 
 UUID::UUID(const UUID &u)
@@ -142,14 +151,14 @@ void UUID::v1_uuid() {
     ++s_uuids_this_tick;
 }
 
-void UUID::v3_uuid(uuid_t nsid, std::string name) {
+void UUID::v3_uuid(UUID nsid, std::string name) {
     unsigned char hash[16];
     HL_MD5_CTX ctx;
     MD5 md5;
 
-    nsid.time_low = htonl(nsid.time_low);
-    nsid.time_mid = htons(nsid.time_mid);
-    nsid.time_hi_and_version = htons(nsid.time_hi_and_version);
+    nsid.m_time_low = htonl(nsid.m_time_low);
+    nsid.m_time_mid = htons(nsid.m_time_mid);
+    nsid.m_time_hi_and_version = htons(nsid.m_time_hi_and_version);
 
     md5.MD5Init(&ctx);
     md5.MD5Update(&ctx, reinterpret_cast<unsigned char *>(&nsid), sizeof nsid);
@@ -176,15 +185,15 @@ void UUID::v4_uuid() {
     m_clock_seq_hi_and_reserved |= 0x80;
 }
 
-void UUID::v5_uuid(uuid_t nsid, std::string name) {
+void UUID::v5_uuid(UUID nsid, std::string name) {
     // SHA-1 hashes to 160 bits, but hash will later be truncated to fit 128 bit uuid size
     unsigned char hash[20];
     HL_SHA1_CTX ctx;
     SHA1 sha1;
 
-    nsid.time_low = htonl(nsid.time_low);
-    nsid.time_mid = htons(nsid.time_mid);
-    nsid.time_hi_and_version = htons(nsid.time_hi_and_version);
+    nsid.m_time_low = htonl(nsid.m_time_low);
+    nsid.m_time_mid = htons(nsid.m_time_mid);
+    nsid.m_time_hi_and_version = htons(nsid.m_time_hi_and_version);
 
     sha1.SHA1Reset(&ctx);
     sha1.SHA1Input(&ctx, reinterpret_cast<unsigned char *>(&nsid), sizeof nsid);
@@ -243,14 +252,17 @@ std::string UUID::urn_str() const {
 /*
  * Operator Overloading
  */
-UUID& UUID::operator=(const UUID& u) {
-    m_time_low = u.m_time_low;
-    m_time_mid = u.m_time_mid;
-    m_time_hi_and_version = u.m_time_hi_and_version;
-    m_clock_seq_hi_and_reserved = u.m_clock_seq_hi_and_reserved;
-    m_clock_seq_low = u.m_clock_seq_low;
+UUID& UUID::operator=(const UUID& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    m_time_low = rhs.m_time_low;
+    m_time_mid = rhs.m_time_mid;
+    m_time_hi_and_version = rhs.m_time_hi_and_version;
+    m_clock_seq_hi_and_reserved = rhs.m_clock_seq_hi_and_reserved;
+    m_clock_seq_low = rhs.m_clock_seq_low;
     for (size_t i{0}; i < 6; ++i) {
-        m_node[i] = u.m_node[i];
+        m_node[i] = rhs.m_node[i];
     }
     return *this;
 }

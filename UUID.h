@@ -33,15 +33,6 @@ public:
         v5  = 5
     };
 
-    typedef struct {
-        uint32_t time_low;
-        uint16_t time_mid;
-        uint16_t time_hi_and_version;
-        uint8_t  clock_seq_hi_and_reserved;
-        uint8_t  clock_seq_low;
-        uint8_t  node[6];
-    } uuid_t;
-
 public:
     /**
      * No-args constructor creates a Nil Version UUID
@@ -53,9 +44,15 @@ public:
      * @param ver
      */
     explicit UUID(Version ver);
-    explicit UUID(Version ver, uuid_t nsid, std::string name);
+    UUID(Version ver, UUID nsid, std::string name);
     /**
-     * Copy constructor copies uuid
+     * Field constructor
+     */
+    UUID(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version,
+         uint8_t clock_seq_hi_and_reserved, uint8_t clock_seq_low,
+         uint8_t node_0, uint8_t node_1, uint8_t node_2, uint8_t node_3, uint8_t node_4, uint8_t node_5);
+    /**
+     * Copy constructor
      * @param uuid
      */
     UUID(const UUID &uuid);
@@ -66,10 +63,10 @@ public:
     UUID(const std::string& uuid_str);
 
     // Common namespace IDs for v3 and v5 generation
-    static const uuid_t NSID_DNS;
-    static const uuid_t NSID_URL;
-    static const uuid_t NSID_OID;
-    static const uuid_t NSID_X500;
+    static const UUID NSID_DNS;
+    static const UUID NSID_URL;
+    static const UUID NSID_OID;
+    static const UUID NSID_X500;
 
 private:
     uint32_t  m_time_low;                   // 32 bits
@@ -85,9 +82,9 @@ private:
     static uint8_t*      s_mac_adr;
 
     void v1_uuid();
-    void v3_uuid(uuid_t nsid, std::string name);
+    void v3_uuid(UUID nsid, std::string name);
     void v4_uuid();
-    void v5_uuid(uuid_t nsid, std::string name);
+    void v5_uuid(UUID nsid, std::string name);
 
     void format_v3_or_v5(unsigned char* hash, int version);
 
@@ -108,7 +105,7 @@ public:
      */
     [[nodiscard]] std::string urn_str() const;
 
-    UUID& operator=(const UUID& u);
+    UUID& operator=(const UUID& rhs);
     friend std::ostream& operator<<(std::ostream& os, const UUID& u);
     friend std::istream& operator>>(std::istream& is, UUID& u);
     friend bool operator==(const UUID& lhs, const UUID& rhs);
