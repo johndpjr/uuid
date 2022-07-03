@@ -18,7 +18,6 @@ uint16_t get_clock_seq() {
     return clock_seq;
 }
 
-// FIXME: random, but not on each seperate run
 template <typename T>
 void randomize(T& num) {
     static std::random_device rd;
@@ -40,8 +39,6 @@ template void randomize<uint8_t>(uint8_t&);      // clock-seq-and-reserved
 //template void randomize<uint8_t>(uint8_t&);    // node
 
 uint8_t* get_node() {
-    // TODO: find actual MAC Address of computer
-    // TODO: give option to user to randomly create MAC Address (security concerns)
     auto node = new uint8_t[6];
     for (size_t i{0}; i<6; ++i) {
         randomize(node[i]);

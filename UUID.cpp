@@ -58,7 +58,7 @@ UUID::UUID(Version ver)
     }
 }
 
-UUID::UUID(Version ver, UUID nsid, std::string name)
+UUID::UUID(Version ver, const UUID &nsid, const std::string &name)
     : UUID()
 {
     switch (ver) {
@@ -93,6 +93,7 @@ UUID::UUID(const UUID &u)
 }
 
 // FIXME: use regex to confirm that the uuid string is valid
+//  [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
 UUID::UUID(const std::string& uuid_str)
     : m_time_low{static_cast<uint32_t>(std::stoul(uuid_str.substr(0, 8), nullptr, 16))},
       m_time_mid{static_cast<uint16_t>(std::stoul(uuid_str.substr(9, 4), nullptr, 16))},
@@ -138,7 +139,6 @@ void UUID::v1_uuid() {
     s_last_uuid_time = uuid_time - s_uuids_this_tick;
     /* clock-seq-hi-and-reserved
      * clock-seq-low */
-    // FIXME: this is a hardcoded variant 1 (0b10x)
     m_clock_seq_low = s_clock_seq & 0xFF;
     m_clock_seq_hi_and_reserved = (s_clock_seq>>8) & 0x1F;
     m_clock_seq_hi_and_reserved |= 0x80;
@@ -180,7 +180,6 @@ void UUID::v4_uuid() {
     // Set version and variant fields
     m_time_hi_and_version &= 0xFFF;
     m_time_hi_and_version |= 0x4000;
-    // FIXME: this is a hardcoded variant 1 (0b10x)
     m_clock_seq_hi_and_reserved &= 0x3F;
     m_clock_seq_hi_and_reserved |= 0x80;
 }
@@ -217,7 +216,6 @@ void UUID::format_v3_or_v5(unsigned char* hash, int version) {
     // Encode version and variant
     m_time_hi_and_version &= 0x0FFF;
     m_time_hi_and_version |= (version << 12);
-    // FIXME: this is a hardcoded variant 1 (0b10x)
     m_clock_seq_hi_and_reserved &= 0x3F;
     m_clock_seq_hi_and_reserved |= 0x80;
 }

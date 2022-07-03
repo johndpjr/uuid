@@ -39,28 +39,39 @@ public:
      *  where all 128 bits are set to 0 (00000000-0000-0000-0000-000000000000)
      */
     UUID();
+
     /**
      * Version constructor
-     * @param ver
+     * @param ver UUID Version
      */
     explicit UUID(Version ver);
-    UUID(Version ver, UUID nsid, std::string name);
+
+    /**
+     * Version 3 and 5 constructor
+     * @param ver UUID Version
+     * @param nsid Namespace ID (concatenated with name)
+     * @param name Any string to identify resource
+     */
+    UUID(Version ver, const UUID &nsid, const std::string &name);
+
     /**
      * Field constructor
      */
     UUID(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version,
          uint8_t clock_seq_hi_and_reserved, uint8_t clock_seq_low,
          uint8_t node_0, uint8_t node_1, uint8_t node_2, uint8_t node_3, uint8_t node_4, uint8_t node_5);
+
     /**
      * Copy constructor
-     * @param uuid
+     * @param uuid UUID to be copied
      */
     UUID(const UUID &uuid);
+
     /**
      * String constructor constructs a UUID from a string
-     * @param uuid_str
+     * @param uuid_str Hexadecimal string representation of the UUID
      */
-    UUID(const std::string& uuid_str);
+    explicit UUID(const std::string& uuid_str);
 
     // Common namespace IDs for v3 and v5 generation
     static const UUID NSID_DNS;
@@ -94,11 +105,13 @@ public:
      *  (Ex: returns 4 from Version 4 UUID)
      */
     [[nodiscard]] unsigned int get_version() const;
+
     /**
      * @return A hexadecimal string representation of the UUID
      *  (Ex: "123e4567-e89b-12d3-a456-426614174000")
      */
     [[nodiscard]] std::string str() const;
+
     /**
      * @return A Uniform Resource Name (URN) string representation of the UUID
      *  (Ex: "urn:uuid:123e4567-e89b-12d3-a456-426614174000")
